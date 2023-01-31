@@ -1,5 +1,7 @@
 package com.melck.productservice.services;
 
+import com.melck.productservice.dto.ProductRequest;
+import com.melck.productservice.dto.ProductResponse;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
@@ -16,8 +18,16 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public Product insert (Product product) {
-        return repository.save(product);
+    public ProductResponse insert (ProductRequest productRequest) {
+        var product = Product.builder()
+                .name(productRequest.getName())
+                .description(productRequest.getDescription())
+                .rate(productRequest.getRate())
+                .price(productRequest.getPrice())
+                .imgUrl(productRequest.getImgUrl())
+                .build();
+
+        return new ProductResponse(repository.save(product));
     }
 
     public Product getProductById(Long id) {

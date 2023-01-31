@@ -1,5 +1,7 @@
 package com.melck.productservice.controller;
 
+import com.melck.productservice.dto.ProductRequest;
+import com.melck.productservice.dto.ProductResponse;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +19,10 @@ public class ProductController {
 
     private final ProductService service;
     @PostMapping
-    public ResponseEntity<Product> insert(@RequestBody Product product) {
-        Product newProduct = service.insert(product);
+    public ResponseEntity<ProductResponse> insert(@RequestBody ProductRequest productRequest) {
+        ProductResponse newProduct = service.insert(productRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newProduct.getId()).toUri();
-        return ResponseEntity.created(uri).body(product);
+        return ResponseEntity.created(uri).body(newProduct);
     }
 
     @GetMapping()

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,5 +25,5 @@ public class Product {
     private String description;
     private double rate;
     private double price;
-    private String imgUrl;
+    private List<String> imgUrl;
 }
