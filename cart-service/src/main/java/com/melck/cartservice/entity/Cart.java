@@ -1,4 +1,4 @@
-package com.melck.productservice.entity;
+package com.melck.cartservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,18 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tb_product")
-public class Product {
+@Table(name = "tb_cart")
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private List<Product> listOfProducts;
 
-    private String name;
-    private String skuCode;
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private double rate;
-    private double price;
-    private List<String> imgUrl;
+
+
 }

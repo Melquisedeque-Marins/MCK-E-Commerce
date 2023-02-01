@@ -16,6 +16,7 @@ import java.util.List;
 public class ProductResponse {
     private Long id;
     private String name;
+    private String skuCode;
     private String description;
     private double rate;
     private double price;
@@ -24,6 +25,7 @@ public class ProductResponse {
     public ProductResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
+        this.skuCode = product.getSkuCode();
         this.description = product.getDescription();
         this.rate = product.getRate();
         this.price = product.getPrice();

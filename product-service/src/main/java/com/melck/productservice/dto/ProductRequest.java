@@ -16,6 +16,7 @@ import java.util.List;
 public class ProductRequest {
 
     private String name;
+    private String skuCode;
     private String description;
     private double rate;
     private double price;
@@ -23,6 +24,7 @@ public class ProductRequest {
 
     public ProductRequest(Product product) {
         this.name = product.getName();
+        this.skuCode = product.getSkuCode();
         this.description = product.getDescription();
         this.rate = product.getRate();
         this.price = product.getPrice();
