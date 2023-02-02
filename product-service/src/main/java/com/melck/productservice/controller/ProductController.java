@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +29,12 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = service.getAllProduct();
+        return ResponseEntity.ok().body(products);
+    }
+
+    @GetMapping("/cart")
+    public ResponseEntity<List<ProductResponse>> getProductsIntoACart(@RequestParam Set<Long> productsId) {
+        List<ProductResponse> products = service.getProductsInACart(productsId);
         return ResponseEntity.ok().body(products);
     }
 

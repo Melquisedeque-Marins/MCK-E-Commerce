@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -38,13 +39,14 @@ public class CartService {
     } public Cart addProductToCart(Long cartId, CartRequest cartRequest) {
         Cart cart = repository.getReferenceById(cartId);
 
-        Mono<Product> product = webClient.get()
+        Product product = webClient.get()
                 .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
                 .retrieve()
-                .bodyToMono(Product.class);
+                .bodyToMono(Product.class)
+                .block();
 
         try {
-            cart.getListOfProductsId().add( product.block().getId());
+            cart.getListOfProductsId().add(product.getId());
             return repository.save(cart);
         } catch (WebClientResponseException e) {
             throw new ProductNotFoundException("Product not found", e);
@@ -60,7 +62,7 @@ public class CartService {
                 .bodyToMono(Product.class);
 
         try {
-            cart.getListOfProductsId().remove( product.block().getId());
+            cart.getListOfProductsId().remove(cartRequest.getProductId());
             return repository.save(cart);
         } catch (WebClientResponseException e) {
             throw new ProductNotFoundException("Product not found", e);
@@ -71,32 +73,27 @@ public class CartService {
         Optional<Cart> cartOptional = repository.findById(cartId);
         Cart cart = cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
-        Mono<Product> product = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/" + cart.getListOfProductsId().contains(1))
-                .retrieve()
-                .bodyToMono(Product.class);
+//        Set<Long> productsId = cart.getListOfProductsId();
 
-        ProductDTO productDTO = new ProductDTO(product.block());
-//
-//        List<ProductDTO> productsDTO = product.block();
-//                .stream()
-//                .map(this::mapProductToProductDTO)
-//                .toList();
+        Product[] products = webClient.get()
+                .uri("http://localhost:8080/api/v1/products/cart",
+                        uriBuilder -> uriBuilder.queryParam("productsId", cart.getListOfProductsId()).build())
+                .retrieve()
+                .bodyToMono(Product[].class)
+                .block();
+
+//        Arrays.stream(products).collect(Collectors.toSet());
+
+        List<ProductDTO> productsDTO = Arrays
+                .stream(products)
+                .map(this::mapProductToProductDTO)
+                .toList();
 
         CartResponse response = CartResponse.builder()
                 .cartNumber(cart.getCartNumber())
                 .id(cart.getId())
-                .listOfProducts(new HashSet<>())
+                .listOfProducts(productsDTO)
                 .build();
-
-        response.getListOfProducts().add(productDTO);
-
-//        try {
-//            cart.getListOfProductId().add( product.block().getId());
-//            return repository.save(cart);
-//        } catch (WebClientResponseException e) {
-//            throw new ProductNotFoundException("Product not found", e);
-//        }
 
         return response;
     }

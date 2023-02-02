@@ -20,7 +20,7 @@ public class CartResponse {
 
     private Long id;
     private String cartNumber;
-    private Set<ProductDTO> listOfProducts = new HashSet<>();
+    private List<ProductDTO> listOfProducts = new ArrayList<>();
 
     public CartResponse(Cart cart) {
 
