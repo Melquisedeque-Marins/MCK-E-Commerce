@@ -1,6 +1,5 @@
-package com.melck.productservice.entity;
+package com.melck.cartservice.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,20 +11,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "tb_product")
-public class Product {
+public class ProductDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String skuCode;
-    @Column(columnDefinition = "TEXT")
     private String description;
     private double rate;
     private double price;
-    @Column(columnDefinition = "TEXT")
+    private Integer quantity;
     private List<String> imgUrl;
 }
