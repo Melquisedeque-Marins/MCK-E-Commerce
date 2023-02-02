@@ -17,10 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -54,12 +51,28 @@ public class CartService {
         }
     }
 
+    public Cart removeProductToCart(Long cartId, CartRequest cartRequest) {
+        Cart cart = repository.getReferenceById(cartId);
+
+        Mono<Product> product = webClient.get()
+                .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
+                .retrieve()
+                .bodyToMono(Product.class);
+
+        try {
+            cart.getListOfProductsId().remove( product.block().getId());
+            return repository.save(cart);
+        } catch (WebClientResponseException e) {
+            throw new ProductNotFoundException("Product not found", e);
+        }
+    }
+
     public CartResponse getCartById(Long cartId) {
         Optional<Cart> cartOptional = repository.findById(cartId);
         Cart cart = cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
         Mono<Product> product = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/" + cart.getListOfProductsId().get(0))
+                .uri("http://localhost:8080/api/v1/products/" + cart.getListOfProductsId().contains(1))
                 .retrieve()
                 .bodyToMono(Product.class);
 
@@ -73,7 +86,7 @@ public class CartService {
         CartResponse response = CartResponse.builder()
                 .cartNumber(cart.getCartNumber())
                 .id(cart.getId())
-                .listOfProducts(new ArrayList<>())
+                .listOfProducts(new HashSet<>())
                 .build();
 
         response.getListOfProducts().add(productDTO);

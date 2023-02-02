@@ -29,9 +29,15 @@ public class CartController {
         return ResponseEntity.ok().body(cartResponse);
     }
 
-    @PatchMapping("/{cartId}")
+    @PatchMapping("/add/{cartId}")
     public ResponseEntity<Cart> addToCart(@PathVariable Long cartId, @RequestBody CartRequest cartRequest) {
         Cart cart = cartService.addProductToCart(cartId, cartRequest);
+        return ResponseEntity.ok().body(cart);
+    }
+
+    @PatchMapping("/remove/{cartId}")
+    public ResponseEntity<Cart> removeToCart(@PathVariable Long cartId, @RequestBody CartRequest cartRequest) {
+        Cart cart = cartService.removeProductToCart(cartId, cartRequest);
         return ResponseEntity.ok().body(cart);
     }
 
