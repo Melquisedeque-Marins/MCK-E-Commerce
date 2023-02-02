@@ -6,10 +6,7 @@ import com.melck.cartservice.entity.Product;
 import com.melck.cartservice.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -20,8 +17,20 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<Cart> addToCart(@RequestBody CartRequest cartRequest) {
-        Cart cart = cartService.addToCart(cartRequest);
+    public ResponseEntity<Cart> newCart() {
+        Cart cart = cartService.newCart();
+        return ResponseEntity.ok().body(cart);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
+        Cart cart = cartService.getCartById(id);
+        return ResponseEntity.ok().body(cart);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Cart> addToCart(@PathVariable Long id, @RequestBody CartRequest cartRequest) {
+        Cart cart = cartService.addProductToCart(id, cartRequest);
         return ResponseEntity.ok().body(cart);
     }
 

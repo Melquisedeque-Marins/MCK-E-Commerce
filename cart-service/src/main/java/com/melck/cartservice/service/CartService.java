@@ -5,6 +5,7 @@ import com.melck.cartservice.dto.ProductDTO;
 import com.melck.cartservice.entity.Cart;
 import com.melck.cartservice.entity.Product;
 import com.melck.cartservice.repository.CartRepository;
+import com.melck.cartservice.service.exception.CartNotFoundException;
 import com.melck.cartservice.service.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -27,6 +29,44 @@ public class CartService {
     private final WebClient webClient;
 
     private final RestTemplate restTemplate;
+
+
+    public Cart newCart() {
+        Cart cart = new Cart();
+        cart.setCartNumber(UUID.randomUUID().toString());
+        return repository.save(cart);
+
+    } public Cart addProductToCart(Long id, CartRequest cartRequest) {
+        Cart cart = getCartById(id);
+
+        Mono<Product> product = webClient.get()
+                .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
+                .retrieve()
+                .bodyToMono(Product.class);
+
+        try {
+            cart.getListOfProductId().add( product.block().getId());
+            return repository.save(cart);
+        } catch (WebClientResponseException e) {
+            throw new ProductNotFoundException("Product not found", e);
+        }
+    }
+
+    public Cart getCartById(Long id) {
+        Optional<Cart> cartOptional = repository.findById(id);
+        return cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
+    }
+
+    private Product mapDTOtoProduct(ProductDTO dto) {
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setQuantity(dto.getQuantity());
+        product.setSkuCode(dto.getSkuCode());
+        return product;
+    }
+
 
 //    public Cart addToCart(CartRequest cartRequest) {
 //        Cart cart = new Cart();
@@ -45,32 +85,4 @@ public class CartService {
 //
 //    return repository.save(cart);
 //    }
-
-    public Cart addToCart(CartRequest cartRequest) {
-        Cart cart = new Cart();
-        cart.setCartNumber(UUID.randomUUID().toString());
-
-        Mono<Product> product = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
-                .retrieve()
-                .bodyToMono(Product.class);
-
-        try {
-            cart.getListOfProductId().add( product.block().getId());
-            return repository.save(cart);
-        } catch (WebClientResponseException e) {
-            throw new ProductNotFoundException("Product not found", e);
-        }
-    }
-
-
-    private Product mapDTOtoProduct(ProductDTO dto) {
-        Product product = new Product();
-        product.setName(dto.getName());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setQuantity(dto.getQuantity());
-        product.setSkuCode(dto.getSkuCode());
-        return product;
-    }
 }
