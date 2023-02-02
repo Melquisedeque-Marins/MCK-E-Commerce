@@ -1,6 +1,7 @@
-package com.melck.cartservice.entity;
+package com.melck.cartservice.dto;
 
-import jakarta.persistence.*;
+import com.melck.cartservice.entity.Cart;
+import com.melck.cartservice.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,16 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "tb_cart")
-public class Cart {
+public class CartResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cartNumber;
-    private List<Long> listOfProductsId = new ArrayList<>();
+    private List<ProductDTO> listOfProducts = new ArrayList<>();
+
+    public CartResponse(Cart cart) {
 
 
-
+    }
 }

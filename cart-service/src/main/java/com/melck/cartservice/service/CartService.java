@@ -1,6 +1,7 @@
 package com.melck.cartservice.service;
 
 import com.melck.cartservice.dto.CartRequest;
+import com.melck.cartservice.dto.CartResponse;
 import com.melck.cartservice.dto.ProductDTO;
 import com.melck.cartservice.entity.Cart;
 import com.melck.cartservice.entity.Product;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,8 +38,8 @@ public class CartService {
         cart.setCartNumber(UUID.randomUUID().toString());
         return repository.save(cart);
 
-    } public Cart addProductToCart(Long id, CartRequest cartRequest) {
-        Cart cart = getCartById(id);
+    } public Cart addProductToCart(Long cartId, CartRequest cartRequest) {
+        Cart cart = repository.getReferenceById(cartId);
 
         Mono<Product> product = webClient.get()
                 .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
@@ -45,16 +47,45 @@ public class CartService {
                 .bodyToMono(Product.class);
 
         try {
-            cart.getListOfProductId().add( product.block().getId());
+            cart.getListOfProductsId().add( product.block().getId());
             return repository.save(cart);
         } catch (WebClientResponseException e) {
             throw new ProductNotFoundException("Product not found", e);
         }
     }
 
-    public Cart getCartById(Long id) {
-        Optional<Cart> cartOptional = repository.findById(id);
-        return cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
+    public CartResponse getCartById(Long cartId) {
+        Optional<Cart> cartOptional = repository.findById(cartId);
+        Cart cart = cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
+
+        Mono<Product> product = webClient.get()
+                .uri("http://localhost:8080/api/v1/products/" + cart.getListOfProductsId().get(0))
+                .retrieve()
+                .bodyToMono(Product.class);
+
+        ProductDTO productDTO = new ProductDTO(product.block());
+//
+//        List<ProductDTO> productsDTO = product.block();
+//                .stream()
+//                .map(this::mapProductToProductDTO)
+//                .toList();
+
+        CartResponse response = CartResponse.builder()
+                .cartNumber(cart.getCartNumber())
+                .id(cart.getId())
+                .listOfProducts(new ArrayList<>())
+                .build();
+
+        response.getListOfProducts().add(productDTO);
+
+//        try {
+//            cart.getListOfProductId().add( product.block().getId());
+//            return repository.save(cart);
+//        } catch (WebClientResponseException e) {
+//            throw new ProductNotFoundException("Product not found", e);
+//        }
+
+        return response;
     }
 
     private Product mapDTOtoProduct(ProductDTO dto) {
@@ -62,11 +93,17 @@ public class CartService {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
-        product.setQuantity(dto.getQuantity());
         product.setSkuCode(dto.getSkuCode());
         return product;
     }
 
+    private ProductDTO mapProductToProductDTO(Product product) {
+        ProductDTO productDTO = ProductDTO.builder()
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+        return productDTO;
+    }
 
 //    public Cart addToCart(CartRequest cartRequest) {
 //        Cart cart = new Cart();

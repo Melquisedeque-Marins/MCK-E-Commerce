@@ -1,5 +1,6 @@
 package com.melck.cartservice.dto;
 
+import com.melck.cartservice.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +14,19 @@ import java.util.List;
 @Builder
 public class ProductDTO {
 
-    private Long id;
     private String name;
     private String skuCode;
     private String description;
     private double rate;
     private double price;
-    private Integer quantity;
     private List<String> imgUrl;
+
+    public ProductDTO (Product product) {
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.price = product.getPrice();
+        this.rate = product.getRate();
+        this.skuCode = product.getSkuCode();
+        this.imgUrl = product.getImgUrl();
+    }
 }

@@ -20,6 +20,5 @@ public class Product {
     private String description;
     private double rate;
     private double price;
-    private Integer quantity;
     private List<String> imgUrl;
 }

@@ -1,6 +1,7 @@
 package com.melck.cartservice.controller;
 
 import com.melck.cartservice.dto.CartRequest;
+import com.melck.cartservice.dto.CartResponse;
 import com.melck.cartservice.entity.Cart;
 import com.melck.cartservice.entity.Product;
 import com.melck.cartservice.service.CartService;
@@ -22,15 +23,15 @@ public class CartController {
         return ResponseEntity.ok().body(cart);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
-        Cart cart = cartService.getCartById(id);
-        return ResponseEntity.ok().body(cart);
+    @GetMapping("/{cartId}")
+    public ResponseEntity<CartResponse> getCartById(@PathVariable Long cartId) {
+        CartResponse cartResponse = cartService.getCartById(cartId);
+        return ResponseEntity.ok().body(cartResponse);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Cart> addToCart(@PathVariable Long id, @RequestBody CartRequest cartRequest) {
-        Cart cart = cartService.addProductToCart(id, cartRequest);
+    @PatchMapping("/{cartId}")
+    public ResponseEntity<Cart> addToCart(@PathVariable Long cartId, @RequestBody CartRequest cartRequest) {
+        Cart cart = cartService.addProductToCart(cartId, cartRequest);
         return ResponseEntity.ok().body(cart);
     }
 

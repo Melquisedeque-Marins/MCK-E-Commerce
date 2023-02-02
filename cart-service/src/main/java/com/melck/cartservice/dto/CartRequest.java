@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CartRequest {
-    private Long cartId;
     private Long productId;
 
 }
