@@ -73,16 +73,14 @@ public class CartService {
         Optional<Cart> cartOptional = repository.findById(cartId);
         Cart cart = cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
-//        Set<Long> productsId = cart.getListOfProductsId();
+        Set<Long> productsId = cart.getListOfProductsId();
 
         Product[] products = webClient.get()
                 .uri("http://localhost:8080/api/v1/products/cart",
-                        uriBuilder -> uriBuilder.queryParam("productsId", cart.getListOfProductsId()).build())
+                        uriBuilder -> uriBuilder.queryParam("productsId", productsId ).build())
                 .retrieve()
                 .bodyToMono(Product[].class)
                 .block();
-
-//        Arrays.stream(products).collect(Collectors.toSet());
 
         List<ProductDTO> productsDTO = Arrays
                 .stream(products)
@@ -119,21 +117,4 @@ public class CartService {
         return productDTO;
     }
 
-//    public Cart addToCart(CartRequest cartRequest) {
-//        Cart cart = new Cart();
-//        cart.setCartNumber(UUID.randomUUID().toString());
-//
-//        List<Product> products = cartRequest.getListOfProductsDTO()
-//                .stream()
-//                .map(this::mapDTOtoProduct)
-//                .toList();
-//        cart.setListOfProducts(products);
-//
-//        List<String> skuCodes = cart.getListOfProducts()
-//                .stream()
-//                .map(Product::getSkuCode)
-//                .toList();
-//
-//    return repository.save(cart);
-//    }
 }
