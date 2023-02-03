@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class ProductDTO {
 
+    private Long id;
     private String name;
     private String skuCode;
     private String description;
@@ -22,6 +23,7 @@ public class ProductDTO {
     private List<String> imgUrl;
 
     public ProductDTO (Product product) {
+        this.id = product.getId();
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();

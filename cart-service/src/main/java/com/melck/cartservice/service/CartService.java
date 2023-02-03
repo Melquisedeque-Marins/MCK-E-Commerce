@@ -109,8 +109,12 @@ public class CartService {
 
     private ProductDTO mapProductToProductDTO(Product product) {
         ProductDTO productDTO = ProductDTO.builder()
+                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
+                .skuCode(product.getSkuCode())
+                .description(product.getDescription())
+                .imgUrl(product.getImgUrl())
                 .build();
         return productDTO;
     }

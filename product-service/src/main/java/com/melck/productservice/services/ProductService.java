@@ -26,6 +26,7 @@ public class ProductService {
                 .rate(productRequest.getRate())
                 .price(productRequest.getPrice())
                 .imgUrl(productRequest.getImgUrl())
+                .skuCode(productRequest.getSkuCode())
                 .build();
 
         return new ProductResponse(repository.save(product));
@@ -44,7 +45,7 @@ public class ProductService {
     public List<ProductResponse> getProductsInACart(Set<Long> productsId) {
         return repository.findByIdIn(productsId)
                 .stream()
-                .map(product -> new ProductResponse(product))
+                .map(ProductResponse::new)
                 .toList();
     }
 }
