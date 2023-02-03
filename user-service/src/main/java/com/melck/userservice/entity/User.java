@@ -31,6 +31,7 @@ public class User {
     private String email;
     private Boolean emailNotifications;
     private String password;
+    private Long cartId;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant createdAt;
 
