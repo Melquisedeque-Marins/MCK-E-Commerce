@@ -41,4 +41,10 @@ public class CartController {
         return ResponseEntity.ok().body(cart);
     }
 
+    @PatchMapping("/empty-the-cart/{cartId}")
+    public ResponseEntity<Cart> emptyTheCart(@PathVariable Long cartId) {
+        Cart cart = cartService.emptyTheCart(cartId);
+        return ResponseEntity.ok().body(cart);
+    }
+
 }

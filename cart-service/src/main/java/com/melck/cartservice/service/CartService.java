@@ -11,6 +11,7 @@ import com.melck.cartservice.service.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -96,6 +97,14 @@ public class CartService {
         return response;
     }
 
+    @Transactional
+    public Cart emptyTheCart(Long cartId) {
+        Optional<Cart> cartOptional = repository.findById(cartId);
+        Cart cart = cartOptional.orElseThrow(() -> new CartNotFoundException("Cart not found"));
+        cart.getListOfProductsId().clear();
+        return repository.save(cart);
+    }
+
     private Product mapDTOtoProduct(ProductDTO dto) {
         Product product = new Product();
         product.setName(dto.getName());
@@ -116,5 +125,4 @@ public class CartService {
                 .build();
         return productDTO;
     }
-
 }
