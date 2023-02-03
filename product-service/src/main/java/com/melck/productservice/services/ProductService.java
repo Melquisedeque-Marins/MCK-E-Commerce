@@ -34,9 +34,10 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Product getProductById(Long id) {
-        Optional<Product> product = repository.findById(id);
-        return product.orElseThrow(() -> new ProductNotFoundException("Product not found"));
+    public ProductResponse getProductById(Long id) {
+        Optional<Product> productOptional = repository.findById(id);
+        Product product = productOptional.orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        return new ProductResponse(product);
     }
 
     @Transactional(readOnly = true)

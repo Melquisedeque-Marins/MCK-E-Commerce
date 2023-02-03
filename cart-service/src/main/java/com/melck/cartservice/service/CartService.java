@@ -41,7 +41,7 @@ public class CartService {
         Cart cart = repository.getReferenceById(cartId);
 
         Product product = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
+                .uri("http://localhost:8083/api/v1/products/" + cartRequest.getProductId())
                 .retrieve()
                 .bodyToMono(Product.class)
                 .block();
@@ -58,7 +58,7 @@ public class CartService {
         Cart cart = repository.getReferenceById(cartId);
 
         Mono<Product> product = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/" + cartRequest.getProductId())
+                .uri("http://localhost:8083/api/v1/products/" + cartRequest.getProductId())
                 .retrieve()
                 .bodyToMono(Product.class);
 
@@ -77,7 +77,7 @@ public class CartService {
         Set<Long> productsId = cart.getListOfProductsId();
 
         Product[] products = webClient.get()
-                .uri("http://localhost:8080/api/v1/products/cart",
+                .uri("http://localhost:8083/api/v1/products/cart",
                         uriBuilder -> uriBuilder.queryParam("productsId", productsId ).build())
                 .retrieve()
                 .bodyToMono(Product[].class)

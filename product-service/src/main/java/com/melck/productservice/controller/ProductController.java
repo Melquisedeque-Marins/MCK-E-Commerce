@@ -33,16 +33,16 @@ public class ProductController {
         return ResponseEntity.ok().body(products);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
+        ProductResponse product = service.getProductById(id);
+        return ResponseEntity.ok().body(product);
+    }
+
     @GetMapping("/cart")
     public ResponseEntity<List<ProductResponse>> getProductsIntoACart(@RequestParam Set<Long> productsId) {
         List<ProductResponse> products = service.getProductsInACart(productsId);
         return ResponseEntity.ok().body(products);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = service.getProductById(id);
-        return ResponseEntity.ok().body(product);
     }
 
 
