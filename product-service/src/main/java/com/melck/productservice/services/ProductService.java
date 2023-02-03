@@ -8,6 +8,7 @@ import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,11 @@ public class ProductService {
 
     private final ProductRepository repository;
 
+    @Transactional
     public ProductResponse insert (ProductRequest productRequest) {
         var product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
-                .rate(productRequest.getRate())
                 .price(productRequest.getPrice())
                 .imgUrl(productRequest.getImgUrl())
                 .skuCode(productRequest.getSkuCode())
@@ -32,13 +33,19 @@ public class ProductService {
         return new ProductResponse(repository.save(product));
     }
 
+    @Transactional(readOnly = true)
     public Product getProductById(Long id) {
         Optional<Product> product = repository.findById(id);
         return product.orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
-    public List<Product> getAllProduct() {
-        return repository.findAll();
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getAllProduct() {
+        List<ProductResponse> products = repository.findAll()
+                .stream()
+                .map(product -> new ProductResponse(product))
+                .toList();
+        return products;
     }
 
 

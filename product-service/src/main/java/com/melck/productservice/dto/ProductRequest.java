@@ -2,6 +2,8 @@ package com.melck.productservice.dto;
 
 import com.melck.productservice.entity.Product;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +17,13 @@ import java.util.List;
 @Builder
 public class ProductRequest {
 
+    @NotBlank(message = "This field is required")
     private String name;
+    @NotBlank(message = "This field is required")
     private String skuCode;
+    @NotBlank(message = "This field is required")
     private String description;
-    private double rate;
+    @Positive(message = "this value can't be negative or zero")
     private double price;
     private List<String> imgUrl;
 
@@ -26,7 +31,6 @@ public class ProductRequest {
         this.name = product.getName();
         this.skuCode = product.getSkuCode();
         this.description = product.getDescription();
-        this.rate = product.getRate();
         this.price = product.getPrice();
         this.imgUrl = product.getImgUrl();
 

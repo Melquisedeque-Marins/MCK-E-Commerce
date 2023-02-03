@@ -4,6 +4,7 @@ import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.services.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +21,15 @@ public class ProductController {
 
     private final ProductService service;
     @PostMapping
-    public ResponseEntity<ProductResponse> insert(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> insert(@Valid @RequestBody ProductRequest productRequest) {
         ProductResponse newProduct = service.insert(productRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newProduct.getId()).toUri();
         return ResponseEntity.created(uri).body(newProduct);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = service.getAllProduct();
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<ProductResponse> products = service.getAllProduct();
         return ResponseEntity.ok().body(products);
     }
 
@@ -43,4 +44,6 @@ public class ProductController {
         Product product = service.getProductById(id);
         return ResponseEntity.ok().body(product);
     }
+
+
 }
