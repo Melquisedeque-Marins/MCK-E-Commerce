@@ -14,12 +14,5 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Review {
-    private Long id;
-    private Long userId;
-    private Long productId;
-    private String title;
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private LocalDate createdAt;
-    private Integer rate;
+   private Integer rate;
 }

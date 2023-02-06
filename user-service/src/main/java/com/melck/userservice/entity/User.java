@@ -45,7 +45,7 @@ public class User {
     }
 
     @PreUpdate
-    public void preupdated(){
+    public void preUpdated(){
         updatedAt = Instant.now();
     }
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -25,6 +26,14 @@ public class Review {
     private String title;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private LocalDate createdAt;
     private Integer rate;
+
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Instant createdAt;
+
+    @PrePersist
+    public void preCreated(){
+        createdAt = Instant.now();
+    }
+
 }

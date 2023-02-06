@@ -1,5 +1,7 @@
 package com.melck.reviewsservice.controller;
 
+import com.melck.reviewsservice.dto.ReviewRequest;
+import com.melck.reviewsservice.dto.ReviewResponse;
 import com.melck.reviewsservice.entity.Review;
 import com.melck.reviewsservice.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,8 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<Review> newReview(@RequestBody Review review) {
-        Review newReview = reviewService.newReview(review);
+    public ResponseEntity<ReviewResponse> newReview(@RequestBody ReviewRequest reviewRequest) {
+        ReviewResponse newReview = reviewService.newReview(reviewRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newReview.getId()).toUri();
         return ResponseEntity.created(uri).body(newReview);
     }
