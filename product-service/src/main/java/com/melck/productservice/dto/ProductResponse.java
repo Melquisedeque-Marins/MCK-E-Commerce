@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -18,9 +19,10 @@ public class ProductResponse {
     private String name;
     private String skuCode;
     private String description;
-    private double rate;
     private double price;
     private List<String> imgUrl;
+    private double rate;
+    private Integer qtyReviews;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
