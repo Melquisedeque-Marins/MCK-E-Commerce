@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewRequest {
     private Long userId;
-    private Long productId;
     private String title;
     private String description;
     private Integer rate;

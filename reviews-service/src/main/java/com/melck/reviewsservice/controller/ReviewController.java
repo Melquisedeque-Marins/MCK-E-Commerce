@@ -19,16 +19,16 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping
-    public ResponseEntity<ReviewResponse> newReview(@RequestBody ReviewRequest reviewRequest) {
-        ReviewResponse newReview = reviewService.newReview(reviewRequest);
+    @PostMapping("/product/{Id}")
+    public ResponseEntity<ReviewResponse> newReview(@RequestBody ReviewRequest reviewRequest, @PathVariable Long Id) {
+        ReviewResponse newReview = reviewService.newReview(reviewRequest, Id);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newReview.getId()).toUri();
         return ResponseEntity.created(uri).body(newReview);
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<List<Review>> getAllReviewByProduct(@PathVariable Long productId) {
-        List<Review> reviews = reviewService.getAllReviewByProduct(productId);
+    public ResponseEntity<List<ReviewResponse>> getAllReviewByProduct(@PathVariable Long productId) {
+        List<ReviewResponse> reviews = reviewService.getAllReviewByProduct(productId);
         return ResponseEntity.ok(reviews);
     }
 }

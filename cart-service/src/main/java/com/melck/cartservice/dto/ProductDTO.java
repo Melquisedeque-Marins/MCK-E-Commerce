@@ -18,7 +18,6 @@ public class ProductDTO {
     private String name;
     private String skuCode;
     private String description;
-    private double rate;
     private double price;
     private List<String> imgUrl;
 
@@ -27,7 +26,6 @@ public class ProductDTO {
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
-        this.rate = product.getRate();
         this.skuCode = product.getSkuCode();
         this.imgUrl = product.getImgUrl();
     }
