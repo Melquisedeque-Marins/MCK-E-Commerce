@@ -68,7 +68,7 @@ public class ProductService {
     public List<ProductResponse> getAllProduct() {
         List<ProductResponse> products = repository.findAll()
                 .stream()
-                .map(product -> new ProductResponse(product))
+                .map(this::mapProductToProductResponse)
                 .toList();
         return products;
     }
@@ -79,5 +79,31 @@ public class ProductService {
                 .stream()
                 .map(ProductResponse::new)
                 .toList();
+    }
+
+    private ProductResponse mapProductToProductResponse(Product product) {
+        Review[] reviews = webClient.get()
+                .uri("http://localhost:8084/api/v1/reviews/" + product.getId())
+                .retrieve()
+                .bodyToMono(Review[].class)
+                .block();
+
+        List<Integer> ratings = Arrays.stream(reviews).map(review -> (review.getRate())).toList();
+
+        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
+
+        var productResponse = ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .skuCode(product.getSkuCode())
+                .price(product.getPrice())
+                .imgUrl(product.getImgUrl())
+                .rate(product.getRate())
+                .build();
+        productResponse.setQtyReviews(reviews.length);
+        productResponse.setRate(average);
+
+        return productResponse;
     }
 }
