@@ -22,8 +22,4 @@ public class CartResponse {
     private String cartNumber;
     private List<ProductDTO> listOfProducts = new ArrayList<>();
 
-    public CartResponse(Cart cart) {
-
-
-    }
 }

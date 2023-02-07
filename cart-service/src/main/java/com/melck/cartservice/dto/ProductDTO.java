@@ -22,12 +22,5 @@ public class ProductDTO {
     private List<String> imgUrl;
     private Integer quantity;
 
-    public ProductDTO (Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.skuCode = product.getSkuCode();
-        this.imgUrl = product.getImgUrl();
-    }
+
 }

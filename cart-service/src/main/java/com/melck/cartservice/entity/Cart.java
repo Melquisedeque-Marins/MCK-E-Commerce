@@ -21,7 +21,8 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cartNumber;
-    private Set<Long> listOfProductsId = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<CartItem> listOfCartItems = new HashSet<>();
 
 
 

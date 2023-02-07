@@ -14,5 +14,6 @@ import java.util.List;
 @Builder
 public class CartRequest {
     private Long productId;
+    private Integer quantity;
 
 }
