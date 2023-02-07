@@ -1,7 +1,9 @@
 package com.melck.orderservice.service;
 
+import com.melck.orderservice.dto.Cart;
 import com.melck.orderservice.dto.OrderItemDTO;
 import com.melck.orderservice.dto.OrderRequest;
+import com.melck.orderservice.dto.Product;
 import com.melck.orderservice.entity.Order;
 import com.melck.orderservice.entity.OrderItem;
 import com.melck.orderservice.repository.OrderRepository;
@@ -20,43 +22,38 @@ public class OrderService {
     private final WebClient webClient;
 
     @Transactional
-    public Order placeOrder(OrderRequest orderRequest) {
+    public Order placeOrder(Long cartId) {
         Order order = new Order();
-        order.setCartId(2L);
 
-        List<OrderItem> orderItemList = orderRequest.getOrderItemDTOList().stream()
-                .map(this::mapOrderItemDtoToOrderItem)
+        Cart cart = webClient.get()
+                .uri("localhost:8080/api/v1/cart/" + cartId)
+                .retrieve()
+                .bodyToMono(Cart.class)
+                .block();
+
+        List<OrderItem> orderItemList = cart.getListOfProducts().stream()
+                .map(this::mapProductToOrderItem)
                 .toList();
 
-        List<OrderItem> orderItemList1 = orderItemList.stream().map(orderItem -> {
-            double total = orderItem.getQuantity() * orderItem.getPrice();
-            orderItem.setAmountPerItem(total);
-            return orderItem;
-        }).toList();
-
-        List<Double> totalPer = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
-
+        List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
+        List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
 
         order.setOrderItemList(orderItemList);
-        order.setAmount(totalPer.stream().mapToDouble(d -> d).sum());
-        
-//        OrderItem[] orderItemsList = webClient.get()
-//                .uri("localhost:8080/api/v1/cart/" + 1)
-//                .retrieve()
-//                .bodyToMono(OrderItem[].class)
-//                .block();
-
+        order.setProductQuantity(totalItem.size());
+        order.setAmount(totalPerItem.stream().mapToDouble(d -> d).sum());
 
         return orderRepository.save(order);
     }
 
-    private OrderItem mapOrderItemDtoToOrderItem (OrderItemDTO dto) {
-        return OrderItem.builder()
-                .skuCode(dto.getSkuCode())
-                .price(dto.getPrice())
-                .quantity(dto.getQuantity())
+    private OrderItem mapProductToOrderItem(Product product) {
+        OrderItem orderItem = OrderItem.builder()
+                .productId(product.getId())
+                .skuCode(product.getSkuCode())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .amountPerItem(product.getPrice()* product.getQuantity())
                 .build();
+        return orderItem;
     }
-
 
 }

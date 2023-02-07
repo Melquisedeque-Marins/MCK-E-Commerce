@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderRequest {
-    private Long cartId;
+public class Cart {
+    private Long id;
+    private String cartNumber;
+    private List<Product> listOfProducts = new ArrayList<>();
 }

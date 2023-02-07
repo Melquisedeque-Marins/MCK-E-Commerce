@@ -22,5 +22,6 @@ public class Order {
     private Long cartId;
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderItem> orderItemList;
+    private Integer productQuantity;
     private Double amount;
 }
