@@ -20,6 +20,7 @@ public class ProductDTO {
     private String description;
     private double price;
     private List<String> imgUrl;
+    private Integer quantity;
 
     public ProductDTO (Product product) {
         this.id = product.getId();

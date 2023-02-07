@@ -34,6 +34,12 @@ spring:
           predicates:
             - Path=/api/v1/reviews/**
             - Method=GET,POST,PUT,PATCH,DELETE
+# Order Service Route
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+            - Method=GET,POST,PUT,PATCH,DELETE
 # Discovery Service Route
         - id: discovery-service
           uri: http://localhost:8761
