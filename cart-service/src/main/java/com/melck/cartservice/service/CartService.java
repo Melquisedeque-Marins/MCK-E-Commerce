@@ -58,11 +58,13 @@ public class CartService {
                     .orElse(null);
 
             if(cartItem!=null ) {
-                    cartItem.setQuantity(cartRequest.getQuantity());
-                    if (cartItem.getQuantity()<=0) {
+                    if (cartRequest.getQuantity()<=0) {
+                        cart.getListOfCartItems().remove(cartItem);
                         cartItemRepository.delete(cartItem);
+                        return repository.save(cart);
                     }
-                    cartItemRepository.save(cartItem);
+                cartItem.setQuantity(cartRequest.getQuantity());
+                cartItemRepository.save(cartItem);
                 return repository.save(cart);
             }
             CartItem newCartItem = new CartItem();
