@@ -41,6 +41,9 @@ public class CartService {
     @Transactional
     public Cart addProductToCart(Long cartId, CartRequest cartRequest) {
         Cart cart = repository.getReferenceById(cartId);
+        if (cartRequest.getQuantity() == null) {
+            cartRequest.setQuantity(1);
+        }
 
         try {
         Product product = webClient.get()
@@ -54,11 +57,19 @@ public class CartService {
                     .findAny()
                     .orElse(null);
 
-            if(cartItem!=null) {
+            if(cartItem!=null ) {
+                    cartItem.setQuantity(cartRequest.getQuantity());
+                    if (cartItem.getQuantity()<=0) {
+                        cartItemRepository.delete(cartItem);
+                    }
+                    cartItemRepository.save(cartItem);
                 return repository.save(cart);
             }
             CartItem newCartItem = new CartItem();
             newCartItem.setProductId(cartRequest.getProductId());
+            if (cartRequest.getQuantity()!=1){
+                newCartItem.setQuantity(cartRequest.getQuantity());
+            }
             newCartItem.setQuantity(1);
             cart.getListOfCartItems().add(newCartItem);
             return repository.save(cart);
