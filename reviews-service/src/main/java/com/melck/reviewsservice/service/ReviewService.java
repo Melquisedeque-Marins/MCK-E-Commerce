@@ -8,13 +8,10 @@ import com.melck.reviewsservice.entity.Review;
 import com.melck.reviewsservice.repository.ReviewRepository;
 import com.melck.reviewsservice.service.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -60,8 +57,6 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
         List<ReviewResponse> reviewResponses = reviews.stream()
                 .map(this::mapReviewToReviewResponse).toList();
-
-
 
         return reviewResponses;
     }

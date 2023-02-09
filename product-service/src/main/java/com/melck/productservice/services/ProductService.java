@@ -7,8 +7,6 @@ import com.melck.productservice.entity.Product;
 import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Var;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -52,7 +50,8 @@ public class ProductService {
                 .bodyToMono(Review[].class)
                 .block();
 
-        List<Integer> ratings = Arrays.stream(reviews).map(review -> (review.getRate())).toList();
+        assert reviews != null;
+        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
 
         double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
 
@@ -66,11 +65,10 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductResponse> getAllProduct() {
-        List<ProductResponse> products = repository.findAll()
+        return repository.findAll()
                 .stream()
                 .map(this::mapProductToProductResponse)
                 .toList();
-        return products;
     }
 
 
@@ -88,7 +86,7 @@ public class ProductService {
                 .bodyToMono(Review[].class)
                 .block();
 
-        List<Integer> ratings = Arrays.stream(reviews).map(review -> (review.getRate())).toList();
+        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
 
         double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
 
