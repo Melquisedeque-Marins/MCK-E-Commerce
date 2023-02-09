@@ -4,6 +4,7 @@ import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.services.ProductService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,9 +36,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = service.getProductById(id);
         return ResponseEntity.ok().body(product);
+    }
+
+    public ResponseEntity fallbackMethod(Long id, RuntimeException runtimeException) {
+        return ResponseEntity.ok().body("Oops! Something went wrong, please try again later");
     }
 
     @GetMapping("/cart")
