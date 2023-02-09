@@ -1,0 +1,1 @@
+INSERT INTO tb_cart (cart_number)  VALUES ('62438d91-366e-476c-a7d7-7ce4003819ba');

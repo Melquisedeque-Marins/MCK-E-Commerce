@@ -38,6 +38,7 @@ public class OrderService {
         List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
         List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
 
+        order.setCartId(cartId);
         order.setOrderItemList(orderItemList);
         order.setProductQuantity(totalItem.stream().mapToInt(d -> d).sum());
         order.setAmount(totalPerItem.stream().mapToDouble(d -> d).sum());
