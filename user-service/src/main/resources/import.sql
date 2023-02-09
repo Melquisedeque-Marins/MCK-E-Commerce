@@ -1,0 +1,1 @@
+INSERT INTO tb_user (full_name, cpf, email, email_notifications, phone_number, whatsapp_notifications, password, birth_date, gender, cart_id)  VALUES ('Melquisedeque dos Santos Marins Junior', '03948583366', 'melck@gmail.com', 'true', '+351935893129', 'false', '$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG', '1989-03-01', 'MALE', 1L);
