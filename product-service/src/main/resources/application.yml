@@ -7,6 +7,9 @@ spring:
     name: product-service
   jpa:
     open-in-view: false
+app-config:
+  client:
+    review: ${REVIEW_URI:http://localhost:8080/api/v1/reviews/%s}
 eureka:
   client:
     register-with-eureka: true
