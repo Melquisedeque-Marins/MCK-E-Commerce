@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -30,6 +31,7 @@ public class ProductController {
     }
 
     @GetMapping()
+    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = service.getAllProduct();
         return ResponseEntity.ok().body(products);
@@ -42,9 +44,10 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    public ResponseEntity fallbackMethod(Long id, RuntimeException runtimeException) {
+    public ResponseEntity fallbackMethod(Long id, WebClientRequestException e) {
         return ResponseEntity.ok().body("Oops! Something went wrong, please try again later");
     }
+
 
     @GetMapping("/cart")
     public ResponseEntity<List<ProductResponse>> getProductsIntoACart(@RequestParam Set<Long> productsId) {

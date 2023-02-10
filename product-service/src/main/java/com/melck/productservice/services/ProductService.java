@@ -40,60 +40,25 @@ public class ProductService {
         repository.save(product);
         var productResponse = new ProductResponse(product);
         productResponse.setQtyReviews(0);
+        productResponse.setRate(0.0);
 
         return productResponse;
     }
 
     @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
-        Optional<Product> productOptional = repository.findById(id);
-        Product product = productOptional.orElseThrow(() -> new ProductNotFoundException("Product not found"));
-
-        Review[] reviews = reviewClient.getReviewByProductId(product.getId());
-
-        assert reviews != null;
-        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
-
-        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
-
-        var productResponse = new ProductResponse(product);
-        productResponse.setQtyReviews(reviews.length);
-        productResponse.setRate(average);
-
-        return productResponse;
+        Product product = repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        log.info("Searching product with id {} ", id);
+        return getProductWithReviews(product);
     }
-//    @Transactional(readOnly = true)
-//    public ProductResponse getProductById(Long id) {
-//        Optional<Product> productOptional = repository.findById(id);
-//        Product product = productOptional.orElseThrow(() -> new ProductNotFoundException("Product not found"));
-//
-//        Review[] reviews = webClient.get()
-//                .uri("http://localhost:8084/api/v1/reviews/" + product.getId())
-//                .retrieve()
-//                .bodyToMono(Review[].class)
-//                .block();
-//
-//        assert reviews != null;
-//        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
-//
-//        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
-//
-//
-//        var productResponse = new ProductResponse(product);
-//        productResponse.setQtyReviews(reviews.length);
-//        productResponse.setRate(average);
-//
-//        return productResponse;
-//    }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> getAllProduct() {
         return repository.findAll()
                 .stream()
-                .map(this::mapProductToProductResponse)
+                .map(this::getProductWithReviews)
                 .toList();
     }
-
 
     public List<ProductResponse> getProductsInACart(Set<Long> productsId) {
         return repository.findByIdIn(productsId)
@@ -102,12 +67,8 @@ public class ProductService {
                 .toList();
     }
 
-    private ProductResponse mapProductToProductResponse(Product product) {
-        Review[] reviews = webClient.get()
-                .uri("http://localhost:8084/api/v1/reviews/" + product.getId())
-                .retrieve()
-                .bodyToMono(Review[].class)
-                .block();
+    private ProductResponse getProductWithReviews(Product product) {
+        Review[] reviews = reviewClient.getReviewByProductId(product.getId());
 
         List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
 
@@ -120,7 +81,6 @@ public class ProductService {
                 .skuCode(product.getSkuCode())
                 .price(product.getPrice())
                 .imgUrl(product.getImgUrl())
-                .rate(product.getRate())
                 .build();
         productResponse.setQtyReviews(reviews.length);
         productResponse.setRate(average);

@@ -29,7 +29,6 @@ public class ProductResponse {
         this.name = product.getName();
         this.skuCode = product.getSkuCode();
         this.description = product.getDescription();
-        this.rate = product.getRate();
         this.price = product.getPrice();
         this.imgUrl = product.getImgUrl();
     }

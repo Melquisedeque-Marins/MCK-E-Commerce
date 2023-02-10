@@ -24,7 +24,6 @@ public class Product {
     private String skuCode;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private double rate;
     private double price;
     @Column(columnDefinition = "TEXT")
     private List<String> imgUrl;
