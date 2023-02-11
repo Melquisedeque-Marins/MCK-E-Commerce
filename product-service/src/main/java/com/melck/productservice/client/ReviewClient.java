@@ -24,13 +24,19 @@ public class ReviewClient {
 
     public Review[] getReviewByProductId(Long id) {
 
-          log.info("Searching Reviews to product {} into Review API", id);
-          return webClient
-                  .get()
-                  .uri(buildUri(id))
-                  .retrieve()
-                  .bodyToMono(Review[].class)
-                  .block();
+          log.info("Searching Reviews to product with id:{} into Review API", id);
+          try {
+              log.info("Returning product id: " + id + " with your reviews list");
+              return webClient
+                      .get()
+                      .uri(buildUri(id))
+                      .retrieve()
+                      .bodyToMono(Review[].class)
+                      .block();
+          } catch (Exception e) {
+              log.error("error fetching review with id:" + id + " into review service." + e.getMessage(), e);
+              throw e;
+          }
     }
 
     private String buildUri(Long id) {

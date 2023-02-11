@@ -48,13 +48,17 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
-        Product product = repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        Product product = repository.findById(id).orElseThrow(() -> {
+            log.error("Product with id: " + id + " not found");
+            return new ProductNotFoundException("Product with id: " + id + " not found");
+        });
         log.info("returning product with id: {} ", id);
         return getProductWithReviews(product);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> getAllProduct() {
+        log.info("Searching for products...");
         return repository.findAll()
                 .stream()
                 .map(this::getProductWithReviews)
