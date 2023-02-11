@@ -44,7 +44,7 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    public ResponseEntity fallbackMethod(Long id, WebClientRequestException e) {
+    public ResponseEntity fallbackMethod(Long id, Exception e) {
         return ResponseEntity.ok().body("Oops! Something went wrong, please try again later");
     }
 
