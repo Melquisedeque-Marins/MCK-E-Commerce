@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -38,14 +39,18 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod2")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = service.getProductById(id);
         return ResponseEntity.ok().body(product);
     }
 
-    public ResponseEntity fallbackMethod(Long id, Exception e) {
-        return ResponseEntity.ok().body("Oops! Something went wrong, please try again later");
+    public ResponseEntity fallbackMethod(Exception e) {
+        return ResponseEntity.ok().body("Oops! Something went wrong, the review service is down. Please try again later.");
+    }
+
+    public ResponseEntity fallbackMethod2(Long id, WebClientResponseException e) {
+        return ResponseEntity.ok().body("Oops! Something went wrong, the review service is down. Please try again later.");
     }
 
 

@@ -47,8 +47,9 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
-        Product product = repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
         log.info("Searching product with id {} ", id);
+        Product product = repository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        log.info("returning product with id: {} ", id);
         return getProductWithReviews(product);
     }
 
