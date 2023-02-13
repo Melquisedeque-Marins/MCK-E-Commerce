@@ -1,6 +1,7 @@
 package com.melck.productservice.services;
 
 import com.melck.productservice.client.ReviewClient;
+import com.melck.productservice.config.ModelMapperConfig;
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
 import com.melck.productservice.dto.Review;
@@ -9,15 +10,13 @@ import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -28,15 +27,11 @@ public class ProductService {
     private final ProductRepository repository;
     private final ReviewClient reviewClient;
 
+    private final ModelMapper modelMapper;
+
     @Transactional
     public ProductResponse insert (ProductRequest productRequest) {
-        var product = Product.builder()
-                .name(productRequest.getName())
-                .description(productRequest.getDescription())
-                .price(productRequest.getPrice())
-                .imgUrl(productRequest.getImgUrl())
-                .skuCode(productRequest.getSkuCode())
-                .build();
+        Product product = modelMapper.map(productRequest, Product.class);
         repository.save(product);
         var productResponse = new ProductResponse(product);
         productResponse.setQtyReviews(0);
