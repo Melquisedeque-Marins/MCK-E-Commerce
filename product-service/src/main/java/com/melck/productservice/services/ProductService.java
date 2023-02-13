@@ -9,6 +9,7 @@ import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,7 +26,6 @@ import java.util.Set;
 public class ProductService {
 
     private final ProductRepository repository;
-    private final WebClient webClient;
     private final ReviewClient reviewClient;
 
     @Transactional
@@ -46,6 +46,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
         Product product = repository.findById(id).orElseThrow(() -> {
@@ -57,6 +58,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "products")
     public List<ProductResponse> getAllProduct() {
         log.info("Searching for products...");
         return repository.findAll()

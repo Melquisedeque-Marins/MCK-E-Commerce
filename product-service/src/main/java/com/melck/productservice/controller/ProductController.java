@@ -39,7 +39,6 @@ public class ProductController {
     }
 
     @GetMapping()
-    @Cacheable(value = "products")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         log.info("Searching into review service");
@@ -48,7 +47,6 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "product", key = "#id")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod2")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = service.getProductById(id);
