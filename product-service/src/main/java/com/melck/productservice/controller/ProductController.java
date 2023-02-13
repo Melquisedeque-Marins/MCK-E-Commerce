@@ -7,6 +7,8 @@ import com.melck.productservice.services.ProductService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/products")
@@ -32,20 +35,24 @@ public class ProductController {
     }
 
     @GetMapping()
+    @Cacheable(value = "products")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        log.info("Searching into review service");
         List<ProductResponse> products = service.getAllProduct();
         return ResponseEntity.ok().body(products);
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "product", key = "#id")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod2")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = service.getProductById(id);
         return ResponseEntity.ok().body(product);
     }
 
-    public ResponseEntity fallbackMethod(Exception e) {
+    public ResponseEntity fallbackMethod(WebClientResponseException e) {
+        log.info("Oops! Something went wrong, the review service is down. Please try again later.", e);
         return ResponseEntity.ok().body("Oops! Something went wrong, the review service is down. Please try again later.");
     }
 
