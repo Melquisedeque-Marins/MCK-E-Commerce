@@ -8,6 +8,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,10 @@ import java.util.concurrent.CompletableFuture;
 public class ProductController {
 
     private final ProductService service;
+
+
     @PostMapping
+    @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<ProductResponse> insert(@Valid @RequestBody ProductRequest productRequest) {
         ProductResponse newProduct = service.insert(productRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newProduct.getId()).toUri();
