@@ -26,7 +26,6 @@ public class ProductService {
 
     private final ProductRepository repository;
     private final ReviewClient reviewClient;
-
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -36,7 +35,7 @@ public class ProductService {
         var productResponse = new ProductResponse(product);
         productResponse.setQtyReviews(0);
         productResponse.setRate(0.0);
-
+        log.info("Saving the new product");
         return productResponse;
     }
 
@@ -60,6 +59,21 @@ public class ProductService {
                 .stream()
                 .map(this::getProductWithReviews)
                 .toList();
+    }
+
+    public ProductResponse editProduct(Long id, ProductRequest productRequest) {
+        Product product = repository.getReferenceById(id);
+        if (productRequest.getName() != product.getName()){
+            product.setName(productRequest.getName());
+        }
+        if (productRequest.getPrice() != 0.0){
+            product.setPrice(productRequest.getPrice());
+        }
+        if (productRequest.getSkuCode().equals(product.getSkuCode())){
+            product.setSkuCode(productRequest.getSkuCode());
+        }
+        repository.save(product);
+        return getProductWithReviews(product);
     }
 
     public List<ProductResponse> getProductsInACart(Set<Long> productsId) {

@@ -29,7 +29,6 @@ public class ProductController {
 
     private final ProductService service;
 
-
     @PostMapping
     @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<ProductResponse> insert(@Valid @RequestBody ProductRequest productRequest) {
@@ -47,7 +46,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod2")
+    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = service.getProductById(id);
         return ResponseEntity.ok().body(product);
@@ -58,16 +57,14 @@ public class ProductController {
         return ResponseEntity.ok().body("Oops! Something went wrong, the review service is down. Please try again later.");
     }
 
-    public ResponseEntity fallbackMethod2(Long id, WebClientResponseException e) {
-        return ResponseEntity.ok().body("Oops! Something went wrong, the review service is down. Please try again later.");
-    }
-
-
     @GetMapping("/cart")
     public ResponseEntity<List<ProductResponse>> getProductsIntoACart(@RequestParam Set<Long> productsId) {
         List<ProductResponse> products = service.getProductsInACart(productsId);
         return ResponseEntity.ok().body(products);
     }
 
-
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> editProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok().body(service.editProduct(id, productRequest));
+    }
 }
