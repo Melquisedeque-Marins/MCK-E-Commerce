@@ -66,10 +66,10 @@ public class ProductService {
         if (productRequest.getName() != product.getName()){
             product.setName(productRequest.getName());
         }
-        if (productRequest.getPrice() != 0.0){
+        if (productRequest.getPrice() != product.getPrice()){
             product.setPrice(productRequest.getPrice());
         }
-        if (productRequest.getSkuCode().equals(product.getSkuCode())){
+        if (!productRequest.getSkuCode().equals(product.getSkuCode())){
             product.setSkuCode(productRequest.getSkuCode());
         }
         repository.save(product);
@@ -85,9 +85,7 @@ public class ProductService {
 
     private ProductResponse getProductWithReviews(Product product) {
         Review[] reviews = reviewClient.getReviewByProductId(product.getId());
-
         List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
-
         double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
 
         var productResponse = ProductResponse.builder()

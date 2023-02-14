@@ -3,6 +3,7 @@ package com.melck.userservice.controller;
 import com.melck.userservice.dto.UserResponse;
 import com.melck.userservice.entity.User;
 import com.melck.userservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> registerUser(@RequestBody User user) {
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody User user) {
         UserResponse newUser = userService.registerUser(user);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUser.getId()).toUri();
         return ResponseEntity.created(uri).body(newUser);
