@@ -11,18 +11,13 @@ import com.melck.cartservice.repository.CartRepository;
 import com.melck.cartservice.service.exception.CartNotFoundException;
 import com.melck.cartservice.service.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Service
@@ -134,25 +129,19 @@ public class CartService {
                 .map(product -> mapProductToProductDTO(product, cart.getListOfCartItems()))
                 .toList();
 
-        CartResponse response = CartResponse.builder()
+        return CartResponse.builder()
                 .cartNumber(cart.getCartNumber())
                 .id(cart.getId())
                 .listOfProducts(productsDTO)
                 .build();
-
-        return response;
     }
 
-
-
     private Product mapDTOtoProduct(ProductDTO dto) {
-
         Product product = new Product();
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setSkuCode(dto.getSkuCode());
-
         return product;
     }
 
