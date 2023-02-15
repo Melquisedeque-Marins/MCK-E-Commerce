@@ -26,7 +26,7 @@ public class CartClient {
                     .block();
             return cart.getId();
         } catch (Exception e) {
-            log.error("error when creating a new cart in a service cart" + e.getMessage(), e);
+            log.error("error when creating a new cart in a service cart " + e.getMessage(), e);
             throw e;
         }
 
