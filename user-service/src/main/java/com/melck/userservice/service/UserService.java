@@ -1,5 +1,6 @@
 package com.melck.userservice.service;
 
+import com.melck.userservice.client.CartClient;
 import com.melck.userservice.dto.Cart;
 import com.melck.userservice.dto.UserRequest;
 import com.melck.userservice.dto.UserResponse;
@@ -23,18 +24,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final WebClient webClient;
     private final ModelMapper modelMapper;
+    private final CartClient cartClient;
 
     @Transactional
     public UserResponse registerUser(UserRequest userRequest) {
         User user = modelMapper.map(userRequest, User.class);
-        Cart cart = webClient.post()
-                .uri("http://localhost:8081/api/v1/cart")
-                .retrieve()
-                .bodyToMono(Cart.class)
-                .block();
-
-        user.setCartId(cart.getId());
-
+        Long cartId = cartClient.getCartId();
+        user.setCartId(cartId);
         return mapUserToUserResponse(userRepository.save(user));
     }
 

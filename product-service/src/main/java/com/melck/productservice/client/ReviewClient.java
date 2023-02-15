@@ -14,7 +14,7 @@ public class ReviewClient {
 
     private final WebClient webClient;
     @Value("${app-config.client.review}")
-    private final String reviewUri;
+    private String reviewUri;
 
     public Review[] getReviewByProductId(Long id) {
 
