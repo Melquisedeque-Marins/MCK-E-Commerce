@@ -1,11 +1,13 @@
 package com.melck.userservice.service;
 
 import com.melck.userservice.dto.Cart;
+import com.melck.userservice.dto.UserRequest;
 import com.melck.userservice.dto.UserResponse;
 import com.melck.userservice.entity.User;
 import com.melck.userservice.repository.UserRepository;
 import com.melck.userservice.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +22,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final WebClient webClient;
+    private final ModelMapper modelMapper;
 
     @Transactional
-    public UserResponse registerUser(User user) {
-
+    public UserResponse registerUser(UserRequest userRequest) {
+        User user = modelMapper.map(userRequest, User.class);
         Cart cart = webClient.post()
                 .uri("http://localhost:8081/api/v1/cart")
                 .retrieve()
@@ -45,10 +48,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
-        List<UserResponse> users = userRepository.findAll()
+        return userRepository.findAll()
                 .stream()
                 .map(this::mapUserToUserResponse).toList();
-        return  users;
     }
 
     private UserResponse mapUserToUserResponse(User user) {

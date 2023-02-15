@@ -1,10 +1,6 @@
 package com.melck.userservice.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.melck.userservice.enuns.Gender;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +22,7 @@ public class UserRequest {
     private Gender gender;
     @NotNull(message = "the birth date field is required")
     @Past(message = "enter a valid date of birth")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+//    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
     @CPF
     @NotBlank(message = "The cpf field is required")

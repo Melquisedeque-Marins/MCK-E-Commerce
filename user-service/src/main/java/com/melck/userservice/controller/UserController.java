@@ -1,5 +1,6 @@
 package com.melck.userservice.controller;
 
+import com.melck.userservice.dto.UserRequest;
 import com.melck.userservice.dto.UserResponse;
 import com.melck.userservice.entity.User;
 import com.melck.userservice.service.UserService;
@@ -20,8 +21,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody User user) {
-        UserResponse newUser = userService.registerUser(user);
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRequest userRequest) {
+        UserResponse newUser = userService.registerUser(userRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUser.getId()).toUri();
         return ResponseEntity.created(uri).body(newUser);
     }
