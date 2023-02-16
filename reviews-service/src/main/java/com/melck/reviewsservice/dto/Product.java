@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Product {
-
     private Long id;
     private String name;
     private String skuCode;

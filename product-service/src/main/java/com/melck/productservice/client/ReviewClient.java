@@ -28,7 +28,7 @@ public class ReviewClient {
                       .bodyToMono(Review[].class)
                       .block();
           } catch (Exception e) {
-              log.error("error fetching review with id:" + id + " into review service." + e.getMessage(), e);
+              log.error("error fetching review with id:" + id + " in review service." + e.getMessage(), e);
               throw e;
           }
     }

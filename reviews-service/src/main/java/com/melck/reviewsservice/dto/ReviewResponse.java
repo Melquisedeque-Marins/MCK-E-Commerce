@@ -12,7 +12,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 public class ReviewResponse {
-
     private Long id;
     private String userName;
     private String title;

@@ -3,29 +3,30 @@ package com.melck.reviewsservice.client;
 import com.melck.reviewsservice.dto.Product;
 import com.melck.reviewsservice.service.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ProductClient {
-
     private final WebClient webClient;
     @Value("${app-config.client.product}")
     private String productServiceUri;
 
     public Product getProductInProductService(Long id) {
-
         try {
             return webClient.get()
                      .uri(buildUri(id))
                      .retrieve()
                      .bodyToMono(Product.class)
                      .block();
-        } catch (WebClientResponseException e) {
-            throw new ResourceNotFoundException("Product not found");
+        } catch (Exception e) {
+            log.error("error when Searching a user in a product service " + e.getMessage(), e);
+            throw e;
         }
     }
 
