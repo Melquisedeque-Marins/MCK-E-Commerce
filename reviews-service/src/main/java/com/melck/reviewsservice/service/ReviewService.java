@@ -26,7 +26,6 @@ public class ReviewService {
     @Transactional
     public ReviewResponse newReview(ReviewRequest reviewRequest, Long productId) {
         Product product = productClient.getProductInProductService(productId);
-        userClient.getUserInUserService(reviewRequest.getUserId());
         Review review = mapReviewRequestToReview(reviewRequest);
         review.setProductId(product.getId());
         log.info("Saving review for product with id: {}", productId);
@@ -35,7 +34,9 @@ public class ReviewService {
     }
 
     public List<ReviewResponse> getAllReviewByProduct(Long productId) {
+        log.info("Searching all reviews to product with id: {}", productId);
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
+        log.info("Returning all reviews to product with id: {}", productId, reviews);
         return reviews.stream()
                 .map(this::mapReviewToReviewResponse).toList();
     }

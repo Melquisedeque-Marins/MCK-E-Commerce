@@ -1,6 +1,5 @@
 package com.melck.cartservice.dto;
 
-import com.melck.cartservice.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -38,12 +38,12 @@ public class ReviewController {
     }
 
     public ResponseEntity<String> fallbackMethod(Exception e) {
-        log.info("Oops! Something went wrong, the user service or product service is down. Please try again later.", e);
-        return ResponseEntity.ok().body("Oops! Something went wrong, Please try again later.");
+        log.info("Oops! Something went wrong. Please try again later.", e);
+        return ResponseEntity.ok().body("Oops! Something went wrong. Please try again later.");
     }
 
     public ResponseEntity<String> userFallbackMethod(Exception e) {
         log.info("Oops! Something went wrong, the user service is down. Please try again later.", e);
-        return ResponseEntity.ok().body("Oops! Something went wrong, Please try again later.");
+        return ResponseEntity.ok().body("Oops! Something went wrong. Please try again later.");
     }
 }

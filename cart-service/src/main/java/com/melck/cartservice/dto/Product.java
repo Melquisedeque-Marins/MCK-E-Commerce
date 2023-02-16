@@ -1,4 +1,4 @@
-package com.melck.cartservice.entity;
+package com.melck.cartservice.dto;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
