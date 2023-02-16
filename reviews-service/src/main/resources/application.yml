@@ -1,6 +1,8 @@
 server:
   port: 8084
 spring:
+  profiles:
+    active: ${APP_PROFILE:test}
   application:
     name: review-service
 
@@ -33,6 +35,17 @@ management:
 resilience4j.circuitbreaker:
   instances:
     user:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      slidingWindowType: COUNT_BASED
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+    product:
       registerHealthIndicator: true
       slidingWindowSize: 10
       minimumNumberOfCalls: 10
