@@ -2,7 +2,6 @@ package com.melck.userservice.controller;
 
 import com.melck.userservice.dto.UserRequest;
 import com.melck.userservice.dto.UserResponse;
-import com.melck.userservice.entity.User;
 import com.melck.userservice.service.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;

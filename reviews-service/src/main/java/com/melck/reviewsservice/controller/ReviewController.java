@@ -4,6 +4,7 @@ import com.melck.reviewsservice.dto.ReviewRequest;
 import com.melck.reviewsservice.dto.ReviewResponse;
 import com.melck.reviewsservice.service.ReviewService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ReviewController {
 
     @PostMapping("/product/{Id}")
     @CircuitBreaker(name = "user",  fallbackMethod = "fallbackMethod")
-    public ResponseEntity<ReviewResponse> newReview(@RequestBody ReviewRequest reviewRequest, @PathVariable Long Id) {
+    public ResponseEntity<ReviewResponse> newReview(@Valid @RequestBody ReviewRequest reviewRequest, @PathVariable Long Id) {
         ReviewResponse newReview = reviewService.newReview(reviewRequest, Id);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newReview.getId()).toUri();
         return ResponseEntity.created(uri).body(newReview);
