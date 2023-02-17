@@ -27,4 +27,6 @@ public class Product {
     private double price;
     @Column(columnDefinition = "TEXT")
     private List<String> imgUrl;
+    private Double rate;
+    private Integer qtyReviews;
 }

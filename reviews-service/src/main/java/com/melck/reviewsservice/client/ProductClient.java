@@ -1,13 +1,12 @@
 package com.melck.reviewsservice.client;
 
 import com.melck.reviewsservice.dto.Product;
-import com.melck.reviewsservice.service.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +28,22 @@ public class ProductClient {
             throw e;
         }
     }
+
+    public void updateRateInProductService (Product product) {
+        try {
+             webClient.patch()
+                    .uri(buildUri(product.getId()))
+                    .body(Mono.just(product), Product.class)
+                    .retrieve()
+                    .bodyToMono(Product.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("error when update the product in a product service " + e.getMessage(), e);
+            throw e;
+        }
+    }
+
+
 
     private String buildUri(Long id) {
         return String.format(productServiceUri, id.toString());

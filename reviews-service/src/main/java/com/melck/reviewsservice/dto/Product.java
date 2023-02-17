@@ -17,6 +17,7 @@ public class Product {
     private String skuCode;
     private String description;
     private double rate;
+    private Integer qtyReviews;
     private double price;
     private List<String> imgUrl;
 }

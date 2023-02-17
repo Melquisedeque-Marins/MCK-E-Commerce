@@ -31,12 +31,10 @@ public class ProductService {
     @Transactional
     public ProductResponse insert (ProductRequest productRequest) {
         Product product = modelMapper.map(productRequest, Product.class);
-        repository.save(product);
-        var productResponse = new ProductResponse(product);
-        productResponse.setQtyReviews(0);
-        productResponse.setRate(0.0);
+        product.setQtyReviews(0);
+        product.setRate(0.0);
         log.info("Saving the new product");
-        return productResponse;
+        return new ProductResponse(repository.save(product));
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +46,7 @@ public class ProductService {
             return new ProductNotFoundException("Product with id: " + id + " not found");
         });
         log.info("returning product with id: {} ", id);
-        return getProductWithReviews(product);
+        return new ProductResponse(product);
     }
 
     @Transactional(readOnly = true)
@@ -57,10 +55,11 @@ public class ProductService {
         log.info("Searching for products...");
         return repository.findAll()
                 .stream()
-                .map(this::getProductWithReviews)
+                .map(ProductResponse::new)
                 .toList();
     }
 
+    @Transactional
     public ProductResponse editProduct(Long id, ProductRequest productRequest) {
         Product product = repository.getReferenceById(id);
         if (productRequest.getName() != product.getName()){
@@ -72,10 +71,16 @@ public class ProductService {
         if (!productRequest.getSkuCode().equals(product.getSkuCode())){
             product.setSkuCode(productRequest.getSkuCode());
         }
-        repository.save(product);
-        return getProductWithReviews(product);
+
+        return new ProductResponse(repository.save(product));
     }
 
+    @Transactional
+    public ProductResponse updateRate(Long productId, Product product) {
+        return new ProductResponse(repository.save(product));
+    }
+
+    @Transactional
     public List<ProductResponse> getProductsInACart(Set<Long> productsId) {
         return repository.findByIdIn(productsId)
                 .stream()
@@ -84,9 +89,9 @@ public class ProductService {
     }
 
     private ProductResponse getProductWithReviews(Product product) {
-        Review[] reviews = reviewClient.getReviewByProductId(product.getId());
-        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
-        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
+//        Review[] reviews = reviewClient.getReviewByProductId(product.getId());
+//        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
+//        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
 
         var productResponse = ProductResponse.builder()
                 .id(product.getId())
@@ -96,8 +101,8 @@ public class ProductService {
                 .price(product.getPrice())
                 .imgUrl(product.getImgUrl())
                 .build();
-        productResponse.setQtyReviews(reviews.length);
-        productResponse.setRate(average);
+//        productResponse.setQtyReviews(reviews.length);
+//        productResponse.setRate(average);
 
         return productResponse;
     }

@@ -30,6 +30,12 @@ public class ReviewService {
         review.setProductId(product.getId());
         log.info("Saving review for product with id: {}", productId);
         reviewRepository.save(review);
+        List<Review> reviews = reviewRepository.findAllByProductId(productId);
+        List<Integer> ratings = reviews.stream().map(Review::getRate).toList();
+        Double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
+        product.setRate(average);
+        product.setQtyReviews(reviews.size());
+        productClient.updateRateInProductService(product);
         return mapReviewToReviewResponse(review);
     }
 

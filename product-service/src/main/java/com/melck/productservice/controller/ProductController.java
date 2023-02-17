@@ -2,6 +2,7 @@ package com.melck.productservice.controller;
 
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
+import com.melck.productservice.entity.Product;
 import com.melck.productservice.services.ProductService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
@@ -59,8 +60,13 @@ public class ProductController {
         return ResponseEntity.ok().body(products);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> editProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
-        return ResponseEntity.ok().body(service.editProduct(id, productRequest));
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductResponse> editProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok().body(service.editProduct(productId, productRequest));
+    }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<ProductResponse> updateRate(@PathVariable Long productId, @RequestBody Product product) {
+        return ResponseEntity.ok().body(service.updateRate(productId, product));
     }
 }

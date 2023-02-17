@@ -22,10 +22,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/product/{Id}")
+    @PostMapping("/product/{id}")
     @CircuitBreaker(name = "user",  fallbackMethod = "fallbackMethod")
-    public ResponseEntity<ReviewResponse> newReview(@Valid @RequestBody ReviewRequest reviewRequest, @PathVariable Long Id) {
-        ReviewResponse newReview = reviewService.newReview(reviewRequest, Id);
+    public ResponseEntity<ReviewResponse> newReview(@Valid @RequestBody ReviewRequest reviewRequest, @PathVariable Long id) {
+        ReviewResponse newReview = reviewService.newReview(reviewRequest, id);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newReview.getId()).toUri();
         return ResponseEntity.created(uri).body(newReview);
     }

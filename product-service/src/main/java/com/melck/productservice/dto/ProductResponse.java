@@ -32,5 +32,7 @@ public class ProductResponse implements Serializable {
         this.description = product.getDescription();
         this.price = product.getPrice();
         this.imgUrl = product.getImgUrl();
+        this.rate = product.getRate();
+        this.qtyReviews = product.getQtyReviews();
     }
 }
