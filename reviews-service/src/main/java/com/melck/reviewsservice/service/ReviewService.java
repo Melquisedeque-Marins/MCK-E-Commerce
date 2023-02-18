@@ -2,7 +2,7 @@ package com.melck.reviewsservice.service;
 
 import com.melck.reviewsservice.client.ProductClient;
 import com.melck.reviewsservice.client.UserClient;
-import com.melck.reviewsservice.dto.Product;
+import com.melck.reviewsservice.dto.ProductResponse;
 import com.melck.reviewsservice.dto.ReviewRequest;
 import com.melck.reviewsservice.dto.ReviewResponse;
 import com.melck.reviewsservice.dto.User;
@@ -10,12 +10,10 @@ import com.melck.reviewsservice.entity.Review;
 import com.melck.reviewsservice.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -29,22 +27,19 @@ public class ReviewService {
 
     @Transactional
     public ReviewResponse newReview(ReviewRequest reviewRequest, Long productId) {
-        Product product = productClient.getProductInProductService(productId);
+        ProductResponse product = productClient.getProductInProductService(productId);
         Review review = mapReviewRequestToReview(reviewRequest);
         review.setProductId(product.getId());
         log.info("Saving review for product with id: {}", productId);
         reviewRepository.save(review);
-
-        String routingKey = "reviews.v1.review-created";
-        Message message = new Message(product.getId().toString().getBytes());
-        rabbitTemplate.send(routingKey, message);
-
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
         List<Integer> ratings = reviews.stream().map(Review::getRate).toList();
         double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
         product.setRate(average);
         product.setQtyReviews(reviews.size());
-        productClient.updateRateInProductService(product);
+        String routingKey = "reviews.v1.review-created";
+        log.info("Sending event to product service for product with id: {}", product.getId());
+        rabbitTemplate.convertAndSend(routingKey, product);
         return mapReviewToReviewResponse(review);
     }
 

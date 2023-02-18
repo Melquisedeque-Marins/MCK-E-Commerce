@@ -1,6 +1,6 @@
 package com.melck.reviewsservice.client;
 
-import com.melck.reviewsservice.dto.Product;
+import com.melck.reviewsservice.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +16,12 @@ public class ProductClient {
     @Value("${app-config.client.product}")
     private String productServiceUri;
 
-    public Product getProductInProductService(Long id) {
+    public ProductResponse getProductInProductService(Long id) {
         try {
             return webClient.get()
                      .uri(buildUri(id))
                      .retrieve()
-                     .bodyToMono(Product.class)
+                     .bodyToMono(ProductResponse.class)
                      .block();
         } catch (Exception e) {
             log.error("error when Searching a user in a product service " + e.getMessage(), e);
@@ -29,13 +29,13 @@ public class ProductClient {
         }
     }
 
-    public void updateRateInProductService (Product product) {
+    public void updateRateInProductService (ProductResponse product) {
         try {
              webClient.patch()
                     .uri(buildUri(product.getId()))
-                    .body(Mono.just(product), Product.class)
+                    .body(Mono.just(product), ProductResponse.class)
                     .retrieve()
-                    .bodyToMono(Product.class)
+                    .bodyToMono(ProductResponse.class)
                     .block();
         } catch (Exception e) {
             log.error("error when update the product in a product service " + e.getMessage(), e);

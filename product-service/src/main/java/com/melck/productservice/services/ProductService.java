@@ -40,7 +40,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "product", key = "#id")
+    //@Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
         Product product = repository.findById(id).orElseThrow(() -> {
@@ -77,16 +77,14 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse updateRate(Long productId, Product product) {
-        Product existingProduct = repository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found id: " + productId));
+    @RabbitListener(queues = "reviews.v1.review-created")
+    public void updateRate(ProductResponse product) {
+        log.info("Updating product with id: {} , received from review service event", product.getId());
+        Product existingProduct = repository.findById(product.getId())
+                .orElseThrow(() -> new ProductNotFoundException("Product not found id: " + product.getId()));
         existingProduct.setRate(product.getRate());
         existingProduct.setQtyReviews(product.getQtyReviews());
-        return new ProductResponse(repository.save(existingProduct));
-    }
-
-    @RabbitListener(queues = "reviews.v1.review-created")
-    public void reviewCreated(String id) {
-        System.out.println("Id received " + id);
+        repository.save(existingProduct);
     }
 
     @Transactional

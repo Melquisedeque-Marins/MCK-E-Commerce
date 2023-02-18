@@ -65,8 +65,4 @@ public class ProductController {
         return ResponseEntity.ok().body(service.editProduct(productId, productRequest));
     }
 
-    @PatchMapping("/{productId}")
-    public ResponseEntity<ProductResponse> updateRate(@PathVariable Long productId, @RequestBody Product product) {
-        return ResponseEntity.ok().body(service.updateRate(productId, product));
-    }
 }
