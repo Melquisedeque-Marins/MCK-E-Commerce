@@ -61,6 +61,7 @@ public class CartService {
         CartItem newCartItem = new CartItem();
         newCartItem.setProductId(cartRequest.getProductId());
 
+
         if (cartRequest.getQuantity()!=1){
             newCartItem.setQuantity(cartRequest.getQuantity());
         }

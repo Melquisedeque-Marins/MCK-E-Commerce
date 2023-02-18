@@ -13,11 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +40,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    //@Cacheable(value = "product", key = "#id")
+    @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
         Product product = repository.findById(id).orElseThrow(() -> {
@@ -77,6 +77,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "product", allEntries = true)
     @RabbitListener(queues = "reviews.v1.review-created")
     public void updateRate(ProductResponse product) {
         log.info("Updating product with id: {} , received from review service event", product.getId());

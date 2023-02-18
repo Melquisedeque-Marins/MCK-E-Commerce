@@ -20,7 +20,7 @@ public class ProductResponse implements Serializable {
     private String name;
     private String skuCode;
     private String description;
-    private double price;
+    private BigDecimal price;
     private List<String> imgUrl;
     private double rate;
     private Integer qtyReviews;

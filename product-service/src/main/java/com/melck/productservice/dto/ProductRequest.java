@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -24,7 +25,7 @@ public class ProductRequest {
     @NotBlank(message = "This field is required")
     private String description;
     @Positive(message = "this value can't be negative or zero")
-    private double price;
+    private BigDecimal price;
     private List<String> imgUrl;
 
     public ProductRequest(Product product) {

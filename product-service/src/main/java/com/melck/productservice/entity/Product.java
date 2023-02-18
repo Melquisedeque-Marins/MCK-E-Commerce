@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -24,7 +25,7 @@ public class Product {
     private String skuCode;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private double price;
+    private BigDecimal price;
     @Column(columnDefinition = "TEXT")
     private List<String> imgUrl;
     private Double rate;

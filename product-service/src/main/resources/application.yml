@@ -15,7 +15,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 60S
+      time-to-live: 20S
 
   rabbitmq:
     host: localhost

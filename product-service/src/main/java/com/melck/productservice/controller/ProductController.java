@@ -37,7 +37,6 @@ public class ProductController {
     @GetMapping()
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        log.info("Searching into review service");
         List<ProductResponse> products = service.getAllProduct();
         return ResponseEntity.ok().body(products);
     }
