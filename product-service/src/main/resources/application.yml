@@ -5,8 +5,10 @@ spring:
     active: ${APP_PROFILE:test}
   application:
     name: product-service
+
   jpa:
     open-in-view: false
+
   redis:
     host: localhost
     port: 6379
@@ -14,6 +16,12 @@ spring:
     type: redis
     redis:
       time-to-live: 60S
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
 
 app-config:
   client:

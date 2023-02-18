@@ -43,8 +43,6 @@ public class ProductClient {
         }
     }
 
-
-
     private String buildUri(Long id) {
         return String.format(productServiceUri, id.toString());
     }

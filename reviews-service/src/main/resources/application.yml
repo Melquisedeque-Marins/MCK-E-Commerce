@@ -5,6 +5,11 @@ spring:
     active: ${APP_PROFILE:test}
   application:
     name: review-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
 
 app-config:
   client:

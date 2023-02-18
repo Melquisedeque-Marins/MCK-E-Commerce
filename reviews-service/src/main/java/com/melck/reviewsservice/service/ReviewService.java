@@ -32,7 +32,7 @@ public class ReviewService {
         reviewRepository.save(review);
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
         List<Integer> ratings = reviews.stream().map(Review::getRate).toList();
-        Double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
+        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
         product.setRate(average);
         product.setQtyReviews(reviews.size());
         productClient.updateRateInProductService(product);
@@ -42,7 +42,7 @@ public class ReviewService {
     public List<ReviewResponse> getAllReviewByProduct(Long productId) {
         log.info("Searching all reviews to product with id: {}", productId);
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
-        log.info("Returning all reviews to product with id: {}", productId, reviews);
+        log.info("Returning all reviews to product with id:{} {}", productId, reviews);
         return reviews.stream()
                 .map(this::mapReviewToReviewResponse).toList();
     }

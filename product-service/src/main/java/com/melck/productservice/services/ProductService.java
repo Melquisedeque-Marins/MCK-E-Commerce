@@ -71,13 +71,15 @@ public class ProductService {
         if (!productRequest.getSkuCode().equals(product.getSkuCode())){
             product.setSkuCode(productRequest.getSkuCode());
         }
-
         return new ProductResponse(repository.save(product));
     }
 
     @Transactional
     public ProductResponse updateRate(Long productId, Product product) {
-        return new ProductResponse(repository.save(product));
+        Product existingProduct = repository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found id: " + productId));
+        existingProduct.setRate(product.getRate());
+        existingProduct.setQtyReviews(product.getQtyReviews());
+        return new ProductResponse(repository.save(existingProduct));
     }
 
     @Transactional
