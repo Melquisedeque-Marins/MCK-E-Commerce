@@ -10,9 +10,12 @@ import com.melck.reviewsservice.entity.Review;
 import com.melck.reviewsservice.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -22,6 +25,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductClient productClient;
     private final UserClient userClient;
+    private final RabbitTemplate rabbitTemplate;
 
     @Transactional
     public ReviewResponse newReview(ReviewRequest reviewRequest, Long productId) {
@@ -30,6 +34,11 @@ public class ReviewService {
         review.setProductId(product.getId());
         log.info("Saving review for product with id: {}", productId);
         reviewRepository.save(review);
+
+        String routingKey = "reviews.v1.review-created";
+        Message message = new Message(product.getId().toString().getBytes());
+        rabbitTemplate.send(routingKey, message);
+
         List<Review> reviews = reviewRepository.findAllByProductId(productId);
         List<Integer> ratings = reviews.stream().map(Review::getRate).toList();
         double average = ratings.stream().mapToInt(r -> r).average().orElse(0);

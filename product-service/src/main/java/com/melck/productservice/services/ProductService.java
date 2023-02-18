@@ -11,6 +11,8 @@ import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,11 @@ public class ProductService {
         existingProduct.setRate(product.getRate());
         existingProduct.setQtyReviews(product.getQtyReviews());
         return new ProductResponse(repository.save(existingProduct));
+    }
+
+    @RabbitListener(queues = "reviews.v1.review-created")
+    public void reviewCreated(String id) {
+        System.out.println("Id received " + id);
     }
 
     @Transactional
