@@ -60,3 +60,4 @@ resilience4j.circuitbreaker:
         eventConsumerBufferSize: 10
         slidingWindowType: COUNT_BASED
         automaticTransitionFromOpenToHalfOpenEnabled: true
+
