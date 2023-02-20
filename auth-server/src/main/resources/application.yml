@@ -4,60 +4,39 @@ spring:
   profiles:
     active: ${APP_PROFILE:test}
   application:
-    name: product-service
+    name: auth-server
 
   jpa:
     open-in-view: false
 
-  redis:
-    host: localhost
-    port: 6379
-  cache:
-    type: redis
-    redis:
-      time-to-live: 20S
+  security:
+    oauth2:
+      client:
+        registration:
+          oauth2-client-credentials:
+            client-id: auth-client
+            client-secret: znXMMSyZ72pm1XGbrvnSxTUJlGWiKhDV
+            scope: openid, profile, roles
+            authorization-grant-type: password
+            provider: keycloak
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8088/realms/mck-e-commerce
+            token-uri: http://localhost:8088/realms/mck-e-commerce/protocol/openid-connect/token
+            logout-uri: http://localhost:8088/realms/mck-e-commerce/protocol/openid-connect/logout
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: rabbitmq
-    password: rabbitmq
-
-app-config:
-  client:
-    review: ${REVIEW_URI:http://localhost:8080/api/v1/reviews/%s}
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    hostname: localhost
-
-management:
-  health:
-    circuitbreakers:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-
-resilience4j.circuitbreaker:
-    instances:
-      review:
-        registerHealthIndicator: true
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-        waitDurationInOpenState: 5s
-        failureRateThreshold: 50
-        eventConsumerBufferSize: 10
-        slidingWindowType: COUNT_BASED
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-
+keycloak:
+  realm: mck-e-commerce
+  resource: auth-client
+  auth-server-url:
+  ssl-required: external
+  public-client: true
+#
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#  instance:
+#    hostname: localhost
