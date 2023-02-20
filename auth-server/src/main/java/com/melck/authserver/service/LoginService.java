@@ -1,9 +1,6 @@
 package com.melck.authserver.service;
 
-import com.melck.authserver.model.LoginRequest;
-import com.melck.authserver.model.LoginResponse;
-import com.melck.authserver.model.Response;
-import com.melck.authserver.model.TokenRequest;
+import com.melck.authserver.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,15 +21,14 @@ public class LoginService {
     private String issueUrl;
     @Value("${spring.security.oauth2.client.provider.keycloak.logout-uri}")
     private String logoutUrl;
+    @Value("${spring.security.oauth2.client.provider.keycloak.introspect-uri}")
+    private String introspectUrl;
     @Value("${spring.security.oauth2.client.registration.oauth2-client-credentials.client-id}")
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.oauth2-client-credentials.client-secret}")
     private String clientSecret;
     @Value("${spring.security.oauth2.client.registration.oauth2-client-credentials.authorization-grant-type}")
     private String grantType;
-
-
-
 
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
         HttpHeaders headers = new HttpHeaders();
@@ -70,5 +66,20 @@ public class LoginService {
             res.setMessage("Logged out successfully");
         }
         return ResponseEntity.ok(res);
+    }
+
+    public ResponseEntity<IntrospectResponse> introspect(TokenRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", clientId);
+        map.add("client_secret", clientSecret);
+        map.add("token", request.getToken());
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map,headers);
+
+        ResponseEntity<IntrospectResponse> response = restTemplate.postForEntity(introspectUrl, httpEntity, IntrospectResponse.class);
+        return ResponseEntity.ok(response.getBody());
     }
 }
