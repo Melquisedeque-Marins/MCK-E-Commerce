@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8087
 spring:
   profiles:
     active: ${APP_PROFILE:test}
@@ -29,15 +29,18 @@ spring:
 keycloak:
   realm: mck-e-commerce
   resource: auth-client
-  auth-server-url:
+  auth-server-url: http://localhost:8088
   ssl-required: external
+  use-resource-role-mappings: true
+  credentials:
+    secret: znXMMSyZ72pm1XGbrvnSxTUJlGWiKhDV
   public-client: true
-#
-#eureka:
-#  client:
-#    register-with-eureka: true
-#    fetch-registry: true
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka
-#  instance:
-#    hostname: localhost
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost

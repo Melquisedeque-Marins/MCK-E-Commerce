@@ -53,6 +53,8 @@ spring:
           predicates:
             - Path=/api/v1/inventory/**
             - Method=GET,POST,PUT,PATCH,DELETE
+# Auth server Route
+       
 # Discovery Service Route
         - id: discovery-service
           uri: http://localhost:8761

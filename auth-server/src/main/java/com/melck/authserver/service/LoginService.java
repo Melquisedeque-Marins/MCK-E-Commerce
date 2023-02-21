@@ -17,8 +17,8 @@ import org.springframework.web.client.RestTemplate;
 public class LoginService {
 
     private final RestTemplate restTemplate;
-    @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
-    private String issueUrl;
+    @Value("${spring.security.oauth2.client.provider.keycloak.token-uri}")
+    private String tokenUrl;
     @Value("${spring.security.oauth2.client.provider.keycloak.logout-uri}")
     private String logoutUrl;
     @Value("${spring.security.oauth2.client.provider.keycloak.introspect-uri}")
@@ -43,7 +43,7 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map,headers);
 
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(issueUrl, httpEntity, LoginResponse.class);
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(tokenUrl, httpEntity, LoginResponse.class);
         return ResponseEntity.ok(response.getBody());
     }
 
