@@ -7,14 +7,16 @@ eureka:
 spring:
   application:
     name: API-GATEWAY
-
+  main:
+    allow-bean-definition-overriding: true
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://localhost:8088/realms/mck-e-commerce"
+          issuer-uri: http://localhost:8088/realms/mck-e-commerce
+#          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
-# Product Service Route
+  # Product Service Route
   cloud:
     gateway:
       routes:
@@ -69,7 +71,6 @@ spring:
             - Path=/eureka/**
 
 
-
 logging:
   level:
     root: INFO
@@ -79,4 +80,4 @@ logging:
           gateway:
             route:
               routeDefinitionLocator: INFO
-
+        security: DEBUG

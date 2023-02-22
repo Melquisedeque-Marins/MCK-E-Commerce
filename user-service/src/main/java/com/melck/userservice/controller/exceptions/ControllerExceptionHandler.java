@@ -26,8 +26,8 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(CpfAlreadyInUseException.class)
     public ResponseEntity<StandardError> cpfAlreadyInUseException(CpfAlreadyInUseException e, HttpServletRequest request){
 
-        StandardError error = new StandardError(now, HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        StandardError error = new StandardError(now, HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
