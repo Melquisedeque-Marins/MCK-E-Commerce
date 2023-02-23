@@ -14,8 +14,8 @@ spring:
       client:
         registration:
           oauth2-client-credentials:
-            client-id: auth-client
-            client-secret: znXMMSyZ72pm1XGbrvnSxTUJlGWiKhDV
+            client-id: spring-cloud-gateway-client
+            client-secret: SvxFR2To1LfqQvJroCghVXX3vl3GoYFd
             scope: openid, profile, roles
             authorization-grant-type: password
             provider: keycloak
@@ -28,12 +28,12 @@ spring:
 
 keycloak:
   realm: mck-e-commerce
-  resource: auth-client
+  resource: spring-cloud-gateway-client
   auth-server-url: http://localhost:8088
   ssl-required: external
   use-resource-role-mappings: true
   credentials:
-    secret: znXMMSyZ72pm1XGbrvnSxTUJlGWiKhDV
+    secret: SvxFR2To1LfqQvJroCghVXX3vl3GoYFd
   public-client: true
 
 eureka:

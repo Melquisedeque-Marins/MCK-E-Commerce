@@ -21,7 +21,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
     private final ProductService service;
