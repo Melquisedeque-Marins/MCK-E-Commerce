@@ -26,7 +26,7 @@ public class ProductController {
 
     private final ProductService service;
 
-    @PostMapping
+    @PostMapping("/")
     @CacheEvict(value = "products", allEntries = true)
     public ResponseEntity<ProductResponse> insert(@Valid @RequestBody ProductRequest productRequest) {
         ProductResponse newProduct = service.insert(productRequest);
