@@ -1,9 +1,7 @@
 package com.melck.userservice.service;
 
 import com.melck.userservice.client.CartClient;
-import com.melck.userservice.dto.Cart;
-import com.melck.userservice.dto.UserRequest;
-import com.melck.userservice.dto.UserResponse;
+import com.melck.userservice.dto.*;
 import com.melck.userservice.entity.User;
 import com.melck.userservice.repository.UserRepository;
 import com.melck.userservice.service.exception.CpfAlreadyInUseException;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -52,28 +51,34 @@ public class UserService {
     }
 
 
-    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    public String userCreation(UserCreationRequest userRequest) {
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("client_id", clientId);
-        map.add("client_secret", clientSecret);
-        map.add("grant_type", grantType);
-        map.add("username", loginRequest.getUsername());
-        map.add("password", loginRequest.getPassword());
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("client_id", "spring-cloud-gateway-client");
+            map.add("client_secret", "SvxFR2To1LfqQvJroCghVXX3vl3GoYFd");
+            map.add("grant_type", "client_credentials");
 
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map,headers);
+        TokenResponse accessToken = webClient.post()
+                .uri("localhost:8088/realms/mck-e-commerce/protocol/openid-connect/token")
+//                .header("Authorization", "Bearer MY_SECRET_TOKEN")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(map))
+                .retrieve()
+                .bodyToMono(TokenResponse.class)
+                .block();
 
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(tokenUrl, httpEntity, LoginResponse.class);
-        return ResponseEntity.ok(response.getBody());
+        String response = webClient.post()
+                .uri("localhost:8088/admin/realms/mck-e-commerce/users")
+                .header("Authorization", "Bearer " + accessToken.getAccess_token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(userRequest)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        return response;
+
     }
-
-
-
-
-
-
 
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
