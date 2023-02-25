@@ -12,8 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -44,6 +50,30 @@ public class UserService {
         log.info("User created successfully");
         return mapUserToUserResponse(userRepository.save(user));
     }
+
+
+    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", clientId);
+        map.add("client_secret", clientSecret);
+        map.add("grant_type", grantType);
+        map.add("username", loginRequest.getUsername());
+        map.add("password", loginRequest.getPassword());
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map,headers);
+
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(tokenUrl, httpEntity, LoginResponse.class);
+        return ResponseEntity.ok(response.getBody());
+    }
+
+
+
+
+
+
 
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {

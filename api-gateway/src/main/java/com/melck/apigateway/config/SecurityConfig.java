@@ -26,10 +26,12 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain SecurityWebFilterChain(ServerHttpSecurity httpSecurity) {
         httpSecurity.authorizeExchange(exchanges -> exchanges
-                        .pathMatchers( "/api/v1/users/**").permitAll()
-                        .pathMatchers( "/api/v1/cart/**").permitAll()
-                        .pathMatchers( "/api/v1/reviews/**").permitAll()
-                        .pathMatchers( "/api/v1/products/**").permitAll()
+//                        .pathMatchers( "/api/v1/users/**").permitAll()
+//                        .pathMatchers( "/api/v1/cart/**").permitAll()
+//                        .pathMatchers( "/api/v1/reviews/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/users").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyExchange().authenticated())
                 .oauth2Login(Customizer.withDefaults());
         httpSecurity.csrf().disable();

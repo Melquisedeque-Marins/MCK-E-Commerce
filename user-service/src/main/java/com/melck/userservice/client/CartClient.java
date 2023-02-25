@@ -24,6 +24,7 @@ public class CartClient {
                     .retrieve()
                     .bodyToMono(Cart.class)
                     .block();
+            assert cart != null;
             return cart.getId();
         } catch (Exception e) {
             log.error("error when creating a new cart in cart service " + e.getMessage(), e);

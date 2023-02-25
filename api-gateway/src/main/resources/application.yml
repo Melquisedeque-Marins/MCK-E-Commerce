@@ -23,10 +23,10 @@ spring:
               redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client
               scope: openid
 
-  # Product Service Route
   cloud:
     gateway:
       routes:
+# Product Service Route
         - id: product-service
           uri: lb://product-service
           predicates:
@@ -40,14 +40,16 @@ spring:
           predicates:
             - Path=/api/v1/cart/**
             - Method=GET,POST,PUT,PATCH,DELETE
-
+          filters:
+            TokenRelay=
 # User Service Route
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/v1/users/**
             - Method=GET,POST,PUT,PATCH,DELETE
-
+          filters:
+            TokenRelay=
 # Review Service Route
         - id: review-service
           uri: lb://review-service
