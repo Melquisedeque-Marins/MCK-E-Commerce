@@ -20,6 +20,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,24 +62,23 @@ public class UserService {
 
         TokenResponse accessToken = webClient.post()
                 .uri("localhost:8088/realms/mck-e-commerce/protocol/openid-connect/token")
-//                .header("Authorization", "Bearer MY_SECRET_TOKEN")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(map))
                 .retrieve()
                 .bodyToMono(TokenResponse.class)
                 .block();
 
-        String response = webClient.post()
-                .uri("localhost:8088/admin/realms/mck-e-commerce/users")
-                .header("Authorization", "Bearer " + accessToken.getAccess_token())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(userRequest)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        return response;
-
+            String response = webClient.post()
+                    .uri("localhost:8088/admin/realms/mck-e-commerce/users")
+                    .header("Authorization", "Bearer " + accessToken.getAccess_token())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(userRequest)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .onErrorResume(e -> Mono.justOrEmpty(e.getLocalizedMessage()))
+                    .block();
+            return response;
     }
 
     @Transactional(readOnly = true)

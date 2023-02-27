@@ -29,8 +29,10 @@ public class SecurityConfig  {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").permitAll()
                         .anyRequest().hasRole(ADMIN)
                 )
+                .csrf().disable()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();
     }
