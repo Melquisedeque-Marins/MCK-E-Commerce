@@ -1,6 +1,6 @@
 package com.melck.userservice.controller.exceptions;
 
-import com.melck.userservice.service.exception.CpfAlreadyInUseException;
+import com.melck.userservice.service.exception.AttributeAlreadyInUseException;
 import com.melck.userservice.service.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -23,8 +23,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(CpfAlreadyInUseException.class)
-    public ResponseEntity<StandardError> cpfAlreadyInUseException(CpfAlreadyInUseException e, HttpServletRequest request){
+    @ExceptionHandler(AttributeAlreadyInUseException.class)
+    public ResponseEntity<StandardError> cpfAlreadyInUseException(AttributeAlreadyInUseException e, HttpServletRequest request){
 
         StandardError error = new StandardError(now, HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

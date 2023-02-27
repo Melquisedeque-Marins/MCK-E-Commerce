@@ -9,25 +9,32 @@ spring:
   jpa:
     open-in-view: false
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8088/realms/mck-e-commerce
-
   redis:
     host: localhost
     port: 6379
+
   cache:
     type: redis
     redis:
       time-to-live: 20S
-
   rabbitmq:
     host: localhost
     port: 5672
     username: rabbitmq
     password: rabbitmq
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/mck-e-commerce
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: spring-cloud-gateway-client
+      principal-attribute: preferred_username
 
 app-config:
   client:

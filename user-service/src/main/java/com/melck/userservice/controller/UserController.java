@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/key")
     public ResponseEntity<String> registerUserKey(@Valid @RequestBody UserCreationRequest userRequest) {
-        String response = userService.userCreation(userRequest);
+        String response = userService.registerUserInKeycloak(userRequest);
         return ResponseEntity.ok(response);
     }
 
