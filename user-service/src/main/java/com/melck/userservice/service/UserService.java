@@ -50,7 +50,6 @@ public class UserService {
         user.setCartId(cartId);
         log.info("User created successfully");
         return mapUserToUserResponse(userRepository.save(user));
-
     }
 
 

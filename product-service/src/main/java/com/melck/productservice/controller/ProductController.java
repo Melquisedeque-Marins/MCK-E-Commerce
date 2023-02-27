@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -62,6 +65,16 @@ public class ProductController {
     @PutMapping("/{productId}")
     public ResponseEntity<ProductResponse> editProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok().body(service.editProduct(productId, productRequest));
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<String> getAdmin(Principal principal) {
+        JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
+        String userName = (String) token.getTokenAttributes().get("name");
+        String userEmail = (String) token.getTokenAttributes().get("email");
+        String userFamilyName = (String) token.getTokenAttributes().get("family_name");
+        Instant tokenExp = (Instant) token.getTokenAttributes().get("exp");
+        return ResponseEntity.ok("Hello Admin \nUser Name : " + userName + "\nUser Email : " + userEmail + "\nUser Familyname : " + userFamilyName + "\ntokenexp" + tokenExp );
     }
 
 }
