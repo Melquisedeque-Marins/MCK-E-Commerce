@@ -19,7 +19,8 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String skuCode;
-    private ItemStatus status;
+    @Enumerated(EnumType.STRING)
+//    private ItemStatus status;
     private Integer quantity;
 
 }
