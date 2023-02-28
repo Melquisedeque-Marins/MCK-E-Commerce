@@ -37,16 +37,16 @@ management:
     health:
       show-details: always
 
-resilience4j.circuitbreaker:
-  instances:
-    user:
-      registerHealthIndicator: true
-      slidingWindowSize: 10
-      minimumNumberOfCalls: 10
-      permittedNumberOfCallsInHalfOpenState: 3
-      waitDurationInOpenState: 5s
-      failureRateThreshold: 50
-      eventConsumerBufferSize: 10
-      slidingWindowType: COUNT_BASED
-      automaticTransitionFromOpenToHalfOpenEnabled: true
+#resilience4j.circuitbreaker:
+#  instances:
+#    user:
+#      registerHealthIndicator: true
+#      slidingWindowSize: 10
+#      minimumNumberOfCalls: 10
+#      permittedNumberOfCallsInHalfOpenState: 3
+#      waitDurationInOpenState: 5s
+#      failureRateThreshold: 50
+#      eventConsumerBufferSize: 10
+#      slidingWindowType: COUNT_BASED
+#      automaticTransitionFromOpenToHalfOpenEnabled: true
 

@@ -1,5 +1,6 @@
 package com.melck.inventoryservice.entity;
 
+import com.melck.inventoryservice.enuns.ItemStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,8 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String skuCode;
+    private ItemStatus status;
+    private Integer quantity;
 
 }
