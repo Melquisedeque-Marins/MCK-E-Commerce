@@ -16,7 +16,7 @@ public class ControllerExceptionHandler {
 
     Instant now = Instant.now();
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<StandardError> objectNotFoundException(ResourceNotFoundException e, HttpServletRequest request){
+    public ResponseEntity<StandardError> resourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request){
 
         StandardError error = new StandardError(now, HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

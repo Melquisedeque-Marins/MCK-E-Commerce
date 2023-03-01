@@ -22,8 +22,10 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(ADMIN,USER)
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
-                        .anyRequest().hasRole(ADMIN)
+                        .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 .oauth2ResourceServer()

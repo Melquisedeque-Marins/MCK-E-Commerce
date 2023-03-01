@@ -15,7 +15,7 @@ spring:
         registration:
           oauth2-client-credentials:
             client-id: spring-cloud-gateway-client
-            client-secret: SvxFR2To1LfqQvJroCghVXX3vl3GoYFd
+            client-secret: YoTjR7kxORsRjmBpL3siPBzBp7NQfxHV
             scope: openid, profile, roles
             authorization-grant-type: password
             provider: keycloak

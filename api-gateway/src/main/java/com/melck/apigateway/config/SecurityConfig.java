@@ -9,8 +9,11 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import java.util.Collection;
@@ -23,15 +26,23 @@ import java.util.stream.Collectors;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+
+    @Bean
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+    }
+
     @Bean
     public SecurityWebFilterChain SecurityWebFilterChain(ServerHttpSecurity httpSecurity) {
         httpSecurity
                 .csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers( HttpMethod.POST,"/api/v1/users/**").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/products", "/api/v1/users").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
+                        .pathMatchers( "/api/v1/products/**").permitAll()
+                        .pathMatchers( "/api/v1/users/**").permitAll()
+//                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+//                        .pathMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
+//                        .pathMatchers(HttpMethod.POST,  "/api/v1/users/key").permitAll()
+//                        .pathMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyExchange().authenticated())
                 .oauth2Login(Customizer.withDefaults());
         return httpSecurity.build();

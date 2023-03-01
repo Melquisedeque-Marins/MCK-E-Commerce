@@ -10,9 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,7 +21,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +33,15 @@ public class UserService {
     private final WebClient webClient;
     private final ModelMapper modelMapper;
     private final CartClient cartClient;
+
+    @Value("${keycloak-client-id}")
+    private String clientId;
+    @Value("${keycloak-client-secret}")
+    private String clientSecret;
+    @Value("${keycloak-token-uri}")
+    private String tokenUri;
+    @Value("${keycloak-user-uri}")
+    private String userUri;
 
     @Transactional
     public UserResponse registerUser(UserRequest userRequest) {
@@ -52,18 +59,16 @@ public class UserService {
         return mapUserToUserResponse(userRepository.save(user));
     }
 
-
     public String registerUserInKeycloak(UserCreationRequest userRequest) {
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("client_id", "spring-cloud-gateway-client");
-        map.add("client_secret", "SvxFR2To1LfqQvJroCghVXX3vl3GoYFd");
+        map.add("client_id", clientId);
+        map.add("client_secret", clientSecret);
         map.add("grant_type", "client_credentials");
 
         try {
-
             TokenResponse accessToken = webClient.post()
-                    .uri("localhost:8088/realms/mck-e-commerce/protocol/openid-connect/token")
+                    .uri(tokenUri)
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(BodyInserters.fromFormData(map))
                     .retrieve()
@@ -75,7 +80,7 @@ public class UserService {
                 return "Error went authenticating";
             }
             return webClient.post()
-                    .uri("localhost:8088/admin/realms/mck-e-commerce/users")
+                    .uri(userUri)
                     .header("Authorization", "Bearer " + accessToken.getAccess_token())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
@@ -87,7 +92,7 @@ public class UserService {
                     .block();
         } catch (WebClientResponseException e ) {
             log.error("Error went trying to request user creation");
-            throw new AttributeAlreadyInUseException("testando erro");
+            throw new AttributeAlreadyInUseException("");
         }
     }
 

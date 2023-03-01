@@ -10,14 +10,19 @@ spring:
 
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/mck-e-commerce
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
            issuer-uri: http://localhost:8088/realms/mck-e-commerce
+           user-name-attribute: preferred_username
         registration:
           spring-cloud-gateway-client:
               client-id: spring-cloud-gateway-client
-              client-secret: SvxFR2To1LfqQvJroCghVXX3vl3GoYFd
+              client-secret: YoTjR7kxORsRjmBpL3siPBzBp7NQfxHV
               provider: keycloak
               authorization-grant-type: authorization_code
               redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client
@@ -25,6 +30,8 @@ spring:
 
   cloud:
     gateway:
+      default-filters:
+        - TokenRelay
       routes:
 # Product Service Route
         - id: product-service
@@ -32,24 +39,20 @@ spring:
           predicates:
             - Path=/api/v1/products/**
             - Method=GET,POST,PUT,PATCH,DELETE
-          filters:
-            TokenRelay=
-# Product Cart Route
+# Cart Service Route
         - id: cart-service
           uri: lb://cart-service
           predicates:
             - Path=/api/v1/cart/**
             - Method=GET,POST,PUT,PATCH,DELETE
           filters:
-            TokenRelay=
+          - TokenRelay=
 # User Service Route
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/v1/users/**
             - Method=GET,POST,PUT,PATCH,DELETE
-          filters:
-            TokenRelay=
 # Review Service Route
         - id: review-service
           uri: lb://review-service
