@@ -25,6 +25,7 @@ public class SecurityConfig  {
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(ADMIN,USER)
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,6 +34,7 @@ public class UserService {
     private final WebClient webClient;
     private final ModelMapper modelMapper;
     private final CartClient cartClient;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Value("${keycloak-client-id}")
     private String clientId;
@@ -59,6 +61,73 @@ public class UserService {
         return mapUserToUserResponse(userRepository.save(user));
     }
 
+    @Transactional
+    public String registerUserLocalAndKeycloak(UserRequest userRequest) {
+
+        User existentUser = userRepository.findByCpf(userRequest.getCpf());
+        if (existentUser != null) {
+            log.error("The CPF:" + userRequest.getCpf() + " is already in use ");
+            throw new AttributeAlreadyInUseException("The CPF: " + userRequest.getCpf() + " is already in use ");
+        }
+        log.info("Creating a new user");
+        User user = modelMapper.map(userRequest, User.class);
+        Long cartId = cartClient.getCartId();
+        user.setCartId(cartId);
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        log.info("User created successfully");
+        userRepository.save(user);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", clientId);
+        map.add("client_secret", clientSecret);
+        map.add("grant_type", "client_credentials");
+
+        var credential = new Credential();
+        credential.setTemporary(false);
+        credential.setType("password");
+        credential.setValue(userRequest.getPassword());
+
+        String[] name = userRequest.getFullName().split(" ");
+
+        UserCreationRequest newUser = new UserCreationRequest();
+        newUser.setEnabled(true);
+        newUser.setEmail(userRequest.getEmail());
+        newUser.setEmailVerified("");
+        newUser.setFirstName(name[0]);
+        newUser.setLastName(name[name.length - 1]);
+        newUser.setUsername(userRequest.getUsername());
+        newUser.getCredentials().add(credential);
+
+
+        try {
+            TokenResponse accessToken = webClient.post()
+                    .uri(tokenUri)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(BodyInserters.fromFormData(map))
+                    .retrieve()
+                    .bodyToMono(TokenResponse.class)
+                    .onErrorResume(e -> Mono.empty())
+                    .block();
+
+            if (accessToken == null){
+                return "Error went authenticating";
+            }
+            return webClient.post()
+                    .uri(userUri)
+                    .header("Authorization", "Bearer " + accessToken.getAccess_token())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(newUser)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(String.class) // error body as String or other class
+                            .flatMap(error -> Mono.error(new AttributeAlreadyInUseException(error)))) // throw a functional exception
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (WebClientResponseException e ) {
+            log.error("Error went trying to request user creation");
+            throw new AttributeAlreadyInUseException("");
+        }
+    }
     public String registerUserInKeycloak(UserCreationRequest userRequest) {
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();

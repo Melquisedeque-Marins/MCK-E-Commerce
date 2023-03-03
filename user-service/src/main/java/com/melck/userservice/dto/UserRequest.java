@@ -18,6 +18,9 @@ public class UserRequest {
     @NotBlank(message = "The name field is required")
     @Size(min = 5, max = 100)
     private String fullName;
+    @NotBlank(message = "The name field is required")
+    @Size(min = 5, max = 100)
+    private String username;
     @NotNull(message = "This field is required")
     private Gender gender;
     @NotNull(message = "the birth date field is required")

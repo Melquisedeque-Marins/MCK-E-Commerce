@@ -42,6 +42,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/local")
+    public ResponseEntity<String> registerUserKey(@Valid @RequestBody UserRequest userRequest) {
+        String response = userService.registerUserLocalAndKeycloak(userRequest);
+        return ResponseEntity.ok(response);
+    }
+
     public ResponseEntity<String> fallbackMethod(WebClientResponseException e) {
         log.info("Oops! Something went wrong, the cart service is down. Please try again later.", e);
         return ResponseEntity.ok().body("Oops! Something went wrong, the cart service is down. Please try again later.");
