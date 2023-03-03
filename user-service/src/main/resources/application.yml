@@ -27,7 +27,6 @@ keycloak-client-secret: ${CLIENT_SECRET:YoTjR7kxORsRjmBpL3siPBzBp7NQfxHV}
 keycloak-token-uri: localhost:8088/realms/mck-e-commerce/protocol/openid-connect/token
 keycloak-user-uri: localhost:8088/admin/realms/mck-e-commerce/users
 
-
 app-config:
   client:
     cart: ${CART_URI:http://localhost:8080/api/v1/cart}

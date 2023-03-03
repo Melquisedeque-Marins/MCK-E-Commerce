@@ -1,4 +1,4 @@
-package com.melck.userservice.config.security;
+package com.melck.cartservice.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +22,8 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(ADMIN,USER)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").hasAnyRole(ADMIN,USER)
                         .requestMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyRequest().authenticated()
                 )

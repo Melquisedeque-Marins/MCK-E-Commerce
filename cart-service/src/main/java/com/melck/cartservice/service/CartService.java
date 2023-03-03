@@ -10,12 +10,10 @@ import com.melck.cartservice.dto.Product;
 import com.melck.cartservice.repository.CartItemRepository;
 import com.melck.cartservice.repository.CartRepository;
 import com.melck.cartservice.service.exception.CartNotFoundException;
-import com.melck.cartservice.service.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.*;
 import java.util.stream.Collectors;
