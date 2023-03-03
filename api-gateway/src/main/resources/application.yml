@@ -25,13 +25,13 @@ spring:
               client-secret: ${CLIENT_SECRET:YoTjR7kxORsRjmBpL3siPBzBp7NQfxHV}
               provider: keycloak
               authorization-grant-type: authorization_code
-              redirect-uri: http://localhost:8080/*
+              redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client
               scope: openid
 
   cloud:
     gateway:
       default-filters:
-        - TokenRelay
+        - TokenRelay=
       routes:
 # Product Service Route
         - id: product-service
@@ -45,8 +45,6 @@ spring:
           predicates:
             - Path=/api/v1/cart/**
             - Method=GET,POST,PUT,PATCH,DELETE
-          filters:
-          - TokenRelay=
 # User Service Route
         - id: user-service
           uri: lb://user-service
@@ -59,7 +57,6 @@ spring:
           predicates:
             - Path=/api/v1/reviews/**
             - Method=GET,POST,PUT,PATCH,DELETE
-
 # Order Service Route
         - id: order-service
           uri: lb://order-service

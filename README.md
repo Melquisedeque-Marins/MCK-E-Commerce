@@ -1,8 +1,11 @@
 # MCK-E-Commerce
-<a id="Sobre"></a>
-## Aplicação backend desenvolvida em Java e SpringBoot utilizando arquitetura de microsserviços. A mesma destina-se a um sistema de e-commerce e possui as seguintes funcionalidades: catálogo de produtos, avaliação, carrinho, estoque, pedidos e notificações.
-
 ![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
+
+## 🚧 Projeto em construção 🚧
+
+<a id="Sobre"></a>
+MCK-E-Commerce é uma aplicação backend desenvolvida em Java e SpringBoot utilizando arquitetura de microsserviços. A mesma destina-se a um sistema de e-commerce e possui as seguintes funcionalidades: catálogo de produtos, avaliação, carrinho, estoque, pedidos e notificações.
+Esta aplicação é composta até o presente momento por um Discovery server, api-gateway e 7 (Sete) microsserviços, e possui implementações de ferramentas como Logger, Resilience4J, CircuitBreaker, Fallback methods, cache distribuído com Redis, mensageria com RabbitMQ, etc.
 
 <a id="Indice"></a>
 ## Índice
@@ -20,6 +23,7 @@
 <a id="Funcionalidades"></a>
 ## 🔨 Funcionalidades 
 - Cadastro de usuarios;
+- Login social
 - Catálogo de produtos;
 - Avaliação de produtos;
 - Carriho de compras;

@@ -13,6 +13,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8088/realms/mck-e-commerce
+          client-id: ${CLIENT_ID:spring-cloud-gateway-client}
+          client-secret: ${CLIENT_SECRET:YoTjR7kxORsRjmBpL3siPBzBp7NQfxHV}
 
 jwt:
   auth:
