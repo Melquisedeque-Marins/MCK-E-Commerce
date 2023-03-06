@@ -1,17 +1,16 @@
 package com.melck.orderservice.service;
 
-import com.melck.orderservice.dto.Cart;
-import com.melck.orderservice.dto.OrderItemDTO;
-import com.melck.orderservice.dto.OrderRequest;
-import com.melck.orderservice.dto.Product;
+import com.melck.orderservice.dto.*;
 import com.melck.orderservice.entity.Order;
 import com.melck.orderservice.entity.OrderItem;
 import com.melck.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -31,30 +30,54 @@ public class OrderService {
                 .bodyToMono(Cart.class)
                 .block();
 
+        if(cart==null) {
+            return null;
+        }
+
         List<OrderItem> orderItemList = cart.getListOfProducts().stream()
                 .map(this::mapProductToOrderItem)
                 .toList();
 
-        List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
-        List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
+        List<String> skuList = orderItemList.stream()
+                .map(OrderItem::getSkuCode)
+                .toList();
 
-        order.setCartId(cartId);
-        order.setOrderItemList(orderItemList);
-        order.setProductQuantity(totalItem.stream().mapToInt(d -> d).sum());
-        order.setAmount(totalPerItem.stream().mapToDouble(d -> d).sum());
+        InventoryResponse[] inventoryResponsesArray = webClient.get()
+                .uri("http://inventory-service/api/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", skuList).build())
+                .retrieve()
+                .bodyToMono(InventoryResponse[].class)
+                .block();
 
-        return orderRepository.save(order);
+        assert inventoryResponsesArray != null;
+        boolean allProductsInStock =  Arrays.stream(inventoryResponsesArray)
+                .allMatch(InventoryResponse::getIsInStock);
+
+        if (allProductsInStock) {
+            List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
+            List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
+            order.setCartId(cartId);
+            order.setOrderItemList(orderItemList);
+            order.setProductQuantity(totalItem.stream().mapToInt(d -> d).sum());
+            order.setAmount(totalPerItem.stream().mapToDouble(d -> d).sum());
+
+            return orderRepository.save(order);
+        }
+        else {
+            throw new IllegalArgumentException("Product is not in stock, try again later");
+        }
+
+
     }
 
     private OrderItem mapProductToOrderItem(Product product) {
-        OrderItem orderItem = OrderItem.builder()
+        return OrderItem.builder()
                 .productId(product.getId())
                 .skuCode(product.getSkuCode())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .amountPerItem(product.getPrice()* product.getQuantity())
                 .build();
-        return orderItem;
     }
 
 }
