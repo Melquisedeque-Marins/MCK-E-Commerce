@@ -25,7 +25,6 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/reviews/**").permitAll()
                         .requestMatchers( "/swagger-resources/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole(ADMIN)
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()

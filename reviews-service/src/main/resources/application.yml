@@ -11,6 +11,19 @@ spring:
     username: rabbitmq
     password: rabbitmq
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/mck-e-commerce
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: spring-cloud-gateway-client
+      principal-attribute: preferred_username
+
 app-config:
   client:
     product: ${PRODUCT_URI:http://localhost:8080/api/v1/products/%s}

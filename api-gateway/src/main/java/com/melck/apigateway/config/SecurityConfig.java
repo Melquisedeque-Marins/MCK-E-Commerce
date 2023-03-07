@@ -38,8 +38,11 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers( "/api/v1/products/**").permitAll()
-                        .pathMatchers(HttpMethod.POST,  "/api/v1/users/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
+                        .pathMatchers(  "/api/v1/users/**").permitAll()
+                        .pathMatchers( "/api/v1/cart/**").permitAll()
+                        .pathMatchers( "/api/v1/reviews/**").permitAll()
+                        .pathMatchers( "/api/v1/orders/**").permitAll()
+                        .pathMatchers( "/api/v1/inventory/**").permitAll()
 //                        .pathMatchers( "/api/v1/users/**").permitAll()
 //                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
 //                        .pathMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
