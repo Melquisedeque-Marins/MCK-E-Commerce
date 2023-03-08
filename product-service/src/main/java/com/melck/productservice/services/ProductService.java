@@ -1,19 +1,14 @@
 package com.melck.productservice.services;
 
-import com.melck.productservice.client.ReviewClient;
-import com.melck.productservice.config.ModelMapperConfig;
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
-import com.melck.productservice.dto.Review;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import com.melck.productservice.services.exceptions.SkuCodeIsAlreadyInUse;
-import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,12 +24,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class ProductService {
-
     private final ProductRepository repository;
-    private final ReviewClient reviewClient;
     private final ModelMapper modelMapper;
     private final RabbitTemplate rabbitTemplate;
-
 
     @Transactional
     public ProductResponse registerProduct (ProductRequest productRequest) {
@@ -75,12 +67,13 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "product", allEntries = true)
     public ProductResponse editProduct(Long id, ProductRequest productRequest) {
         Product product = repository.getReferenceById(id);
-        if (productRequest.getName() != product.getName()){
+        if (productRequest.getName().equals(product.getName())){
             product.setName(productRequest.getName());
         }
-        if (productRequest.getPrice() != product.getPrice()){
+        if (productRequest.getPrice().equals(product.getPrice())){
             product.setPrice(productRequest.getPrice());
         }
         if (!productRequest.getSkuCode().equals(product.getSkuCode())){
@@ -107,16 +100,5 @@ public class ProductService {
                 .stream()
                 .map(ProductResponse::new)
                 .toList();
-    }
-
-    private ProductResponse getProductWithReviews(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .skuCode(product.getSkuCode())
-                .price(product.getPrice())
-                .imgUrl(product.getImgUrl())
-                .build();
     }
 }

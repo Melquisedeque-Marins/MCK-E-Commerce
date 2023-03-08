@@ -1,7 +1,6 @@
 package com.melck.productservice.dto;
 
 import com.melck.productservice.entity.Product;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -34,6 +33,5 @@ public class ProductRequest {
         this.description = product.getDescription();
         this.price = product.getPrice();
         this.imgUrl = product.getImgUrl();
-
     }
 }

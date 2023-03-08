@@ -1,7 +1,6 @@
 package com.melck.productservice.dto;
 
 import com.melck.productservice.entity.Product;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

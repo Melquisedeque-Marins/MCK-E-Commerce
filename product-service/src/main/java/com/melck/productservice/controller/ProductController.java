@@ -2,23 +2,19 @@ package com.melck.productservice.controller;
 
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
-import com.melck.productservice.entity.Product;
 import com.melck.productservice.services.ProductService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.security.Principal;
-import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +28,7 @@ public class ProductController {
 
     @PostMapping
     @CacheEvict(value = "products", allEntries = true)
+    @Operation(summary = "Register a new product" , description = "This endpoint is used to register new products in database ")
     public ResponseEntity<ProductResponse> registerProduct(@Valid @RequestBody ProductRequest productRequest) {
         ProductResponse newProduct = service.registerProduct(productRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newProduct.getId()).toUri();
