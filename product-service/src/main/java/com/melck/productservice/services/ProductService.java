@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -30,13 +31,17 @@ public class ProductService {
     private final ProductRepository repository;
     private final ReviewClient reviewClient;
     private final ModelMapper modelMapper;
+    private final RabbitTemplate rabbitTemplate;
+
 
     @Transactional
-    public ProductResponse insert (ProductRequest productRequest) {
+    public ProductResponse registerProduct (ProductRequest productRequest) {
         Product product = modelMapper.map(productRequest, Product.class);
         product.setQtyReviews(0);
         product.setRate(0.0);
         log.info("Saving the new product");
+        String routingKey = "products.v1.product-created";
+        rabbitTemplate.convertAndSend(routingKey, product.getSkuCode());
         return new ProductResponse(repository.save(product));
     }
 

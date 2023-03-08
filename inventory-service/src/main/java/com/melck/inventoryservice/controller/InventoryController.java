@@ -19,12 +19,12 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping
-    public ResponseEntity<Inventory> registerInInventory (@RequestBody InventoryRequest inventoryRequest) {
-        Inventory inventory = inventoryService.registerInInventory(inventoryRequest);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(inventory.getId()).toUri();
-        return ResponseEntity.created(uri).body(inventory);
-    }
+//    @PostMapping
+//    public ResponseEntity<Inventory> registerInInventory (@RequestBody InventoryRequest inventoryRequest) {
+//        Inventory inventory = inventoryService.registerInInventory(inventoryRequest);
+//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(inventory.getId()).toUri();
+//        return ResponseEntity.created(uri).body(inventory);
+//    }
 
     @GetMapping
     public ResponseEntity<List<InventoryResponse>> isInStock (@RequestParam List<String> skuCode) {

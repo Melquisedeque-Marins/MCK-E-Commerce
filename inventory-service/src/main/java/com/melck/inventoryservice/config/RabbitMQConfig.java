@@ -1,4 +1,4 @@
-package com.melck.productservice.config;
+package com.melck.inventoryservice.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -15,7 +15,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue queue() {
-        return new Queue("products.v1.product-created");
+        return new Queue("inventory.v1.inventory-updated");
     }
 
     @Bean

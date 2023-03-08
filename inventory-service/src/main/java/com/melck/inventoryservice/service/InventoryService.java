@@ -5,16 +5,20 @@ import com.melck.inventoryservice.dto.InventoryResponse;
 import com.melck.inventoryservice.entity.Inventory;
 import com.melck.inventoryservice.enuns.ItemStatus;
 import com.melck.inventoryservice.repository.InventoryRepository;
+import com.melck.inventoryservice.service.exceptions.ResourceNotFoundException;
+import com.melck.inventoryservice.service.exceptions.SkuCodeAlreadyRegisteredException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,12 +29,16 @@ public class InventoryService {
     private final ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
-    public Inventory registerInInventory(InventoryRequest inventoryRequest) {
-        Inventory inventory = modelMapper.map(inventoryRequest, Inventory.class);
-//        if (inventoryRequest.getQuantity()<0) {
-//            inventory.setStatus(ItemStatus.OUT_OF_STOCK);
-//        }
-//        inventory.setStatus(ItemStatus.IN_STOCK);
+    @RabbitListener(queues = "products.v1.product-created")
+    public Inventory registerInInventory(String skuCode) {
+        Optional<Inventory> inventoryOptional = inventoryRepository.findBySkuCode(skuCode);
+
+        if (inventoryOptional != null ) {
+            throw new SkuCodeAlreadyRegisteredException("product with sku code: " + skuCode + " is already registered!");
+        }
+        Inventory inventory = new Inventory();
+        inventory.setQuantity(0);
+        inventory.setSkuCode(skuCode);
         return inventoryRepository.save(inventory);
     }
 

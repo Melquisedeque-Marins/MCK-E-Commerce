@@ -32,8 +32,8 @@ public class ProductController {
 
     @PostMapping
     @CacheEvict(value = "products", allEntries = true)
-    public ResponseEntity<ProductResponse> insert(@Valid @RequestBody ProductRequest productRequest) {
-        ProductResponse newProduct = service.insert(productRequest);
+    public ResponseEntity<ProductResponse> registerProduct(@Valid @RequestBody ProductRequest productRequest) {
+        ProductResponse newProduct = service.registerProduct(productRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newProduct.getId()).toUri();
         return ResponseEntity.created(uri).body(newProduct);
     }
