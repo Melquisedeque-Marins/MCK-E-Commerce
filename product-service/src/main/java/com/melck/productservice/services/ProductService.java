@@ -8,6 +8,7 @@ import com.melck.productservice.dto.Review;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.repository.ProductRepository;
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
+import com.melck.productservice.services.exceptions.SkuCodeIsAlreadyInUse;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -36,6 +38,11 @@ public class ProductService {
 
     @Transactional
     public ProductResponse registerProduct (ProductRequest productRequest) {
+        Optional<Product> productOpt = repository.findBySkuCode(productRequest.getSkuCode());
+
+        if (productOpt.isPresent()) {
+            throw new SkuCodeIsAlreadyInUse("The SKU code: " + productRequest.getSkuCode() + " is already in use ");
+        }
         Product product = modelMapper.map(productRequest, Product.class);
         product.setQtyReviews(0);
         product.setRate(0.0);
@@ -103,11 +110,7 @@ public class ProductService {
     }
 
     private ProductResponse getProductWithReviews(Product product) {
-//        Review[] reviews = reviewClient.getReviewByProductId(product.getId());
-//        List<Integer> ratings = Arrays.stream(reviews).map(Review::getRate).toList();
-//        double average = ratings.stream().mapToInt(r -> r).average().orElse(0);
-
-        var productResponse = ProductResponse.builder()
+        return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
@@ -115,9 +118,5 @@ public class ProductService {
                 .price(product.getPrice())
                 .imgUrl(product.getImgUrl())
                 .build();
-//        productResponse.setQtyReviews(reviews.length);
-//        productResponse.setRate(average);
-
-        return productResponse;
     }
 }

@@ -1,6 +1,7 @@
 package com.melck.productservice.controller.exceptions;
 
 import com.melck.productservice.services.exceptions.ProductNotFoundException;
+import com.melck.productservice.services.exceptions.SkuCodeIsAlreadyInUse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,13 @@ public class ControllerExceptionHandler {
     Instant now = Instant.now();
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<StandardError> objectNotFoundException(ProductNotFoundException e, HttpServletRequest request){
+
+        StandardError error = new StandardError(now, HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+    
+    @ExceptionHandler(SkuCodeIsAlreadyInUse.class)
+    public ResponseEntity<StandardError> skuCodeIsAlreadyInUse(SkuCodeIsAlreadyInUse e, HttpServletRequest request){
 
         StandardError error = new StandardError(now, HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
