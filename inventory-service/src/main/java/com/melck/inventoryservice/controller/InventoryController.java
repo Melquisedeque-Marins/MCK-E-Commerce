@@ -27,8 +27,8 @@ public class InventoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InventoryResponse>> isInStock (@RequestParam List<String> skuCodes) {
-        return ResponseEntity.ok(inventoryService.isInStock(skuCodes));
+    public ResponseEntity<List<InventoryResponse>> isInStock (@RequestParam List<String> skuCode) {
+        return ResponseEntity.ok(inventoryService.isInStock(skuCode));
     }
 
     @GetMapping("/{skuCode}")

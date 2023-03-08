@@ -5,13 +5,17 @@ import com.melck.orderservice.entity.Order;
 import com.melck.orderservice.entity.OrderItem;
 import com.melck.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class OrderService {
@@ -24,7 +28,7 @@ public class OrderService {
         Order order = new Order();
 
         Cart cart = webClient.get()
-                .uri("localhost:8080/api/v1/cart/" + cartId)
+                .uri("http://localhost:8080/api/v1/cart/" + cartId)
                 .retrieve()
                 .bodyToMono(Cart.class)
                 .block();
@@ -32,27 +36,30 @@ public class OrderService {
         if(cart==null) {
             return null;
         }
-
+        log.info("converting products in order items ");
         List<OrderItem> orderItemList = cart.getListOfProducts().stream()
                 .map(this::mapProductToOrderItem)
                 .toList();
-
-        List<String> skuList = orderItemList.stream()
+        log.info("collecting sku codes ");
+        List<String> skuCodes = orderItemList.stream()
                 .map(OrderItem::getSkuCode)
                 .toList();
 
+        log.info("check inventory for {}", skuCodes);
+
         InventoryResponse[] inventoryResponsesArray = webClient.get()
-                .uri("http://inventory-service/api/inventory",
-                        uriBuilder -> uriBuilder.queryParam("skuCode", skuList).build())
+                .uri("http://localhost:8080/api/v1/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
 
-        assert inventoryResponsesArray != null;
+        log.info("check if is in stock {}", (Object) inventoryResponsesArray);
         boolean allProductsInStock =  Arrays.stream(inventoryResponsesArray)
                 .allMatch(InventoryResponse::getIsInStock);
 
         if (allProductsInStock) {
+
             List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
             List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
             order.setCartId(cartId);
