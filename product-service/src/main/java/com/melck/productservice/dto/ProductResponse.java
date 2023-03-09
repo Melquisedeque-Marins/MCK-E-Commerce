@@ -24,14 +24,16 @@ public class ProductResponse implements Serializable {
     private double rate;
     private Integer qtyReviews;
 
-    public ProductResponse(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.skuCode = product.getSkuCode();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.imgUrl = product.getImgUrl();
-        this.rate = product.getRate();
-        this.qtyReviews = product.getQtyReviews();
+    public static ProductResponse of(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .skuCode(product.getSkuCode())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .imgUrl(product.getImgUrl())
+                .rate(product.getRate())
+                .qtyReviews(product.getQtyReviews())
+                .build();
     }
 }

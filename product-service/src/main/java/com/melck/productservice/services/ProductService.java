@@ -8,7 +8,6 @@ import com.melck.productservice.services.exceptions.ProductNotFoundException;
 import com.melck.productservice.services.exceptions.SkuCodeIsAlreadyInUse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,7 +24,6 @@ import java.util.Set;
 @Service
 public class ProductService {
     private final ProductRepository repository;
-    private final ModelMapper modelMapper;
     private final RabbitTemplate rabbitTemplate;
 
     @Transactional
@@ -35,25 +33,22 @@ public class ProductService {
         if (productOpt.isPresent()) {
             throw new SkuCodeIsAlreadyInUse("The SKU code: " + productRequest.getSkuCode() + " is already in use ");
         }
-        Product product = modelMapper.map(productRequest, Product.class);
+        Product product = productRequest.toProduct();
         product.setQtyReviews(0);
         product.setRate(0.0);
         log.info("Saving the new product");
         String routingKey = "products.v1.product-created";
         rabbitTemplate.convertAndSend(routingKey, product.getSkuCode());
-        return new ProductResponse(repository.save(product));
+        return ProductResponse.of(repository.save(product));
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
-        Product product = repository.findById(id).orElseThrow(() -> {
-            log.error("Product with id: " + id + " not found");
-            return new ProductNotFoundException("Product with id: " + id + " not found");
-        });
+        Product product = findOrError(id);
         log.info("returning product with id: {} ", id);
-        return new ProductResponse(product);
+        return ProductResponse.of(product);
     }
 
     @Transactional(readOnly = true)
@@ -62,14 +57,14 @@ public class ProductService {
         log.info("Searching for products...");
         return repository.findAll()
                 .stream()
-                .map(ProductResponse::new)
+                .map(ProductResponse::of)
                 .toList();
     }
 
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public ProductResponse editProduct(Long id, ProductRequest productRequest) {
-        Product product = repository.getReferenceById(id);
+        Product product = findOrError(id);
         if (productRequest.getName().equals(product.getName())){
             product.setName(productRequest.getName());
         }
@@ -79,7 +74,7 @@ public class ProductService {
         if (!productRequest.getSkuCode().equals(product.getSkuCode())){
             product.setSkuCode(productRequest.getSkuCode());
         }
-        return new ProductResponse(repository.save(product));
+        return ProductResponse.of(repository.save(product));
     }
 
     @Transactional
@@ -87,8 +82,7 @@ public class ProductService {
     @RabbitListener(queues = "reviews.v1.review-created")
     public void updateRate(ProductResponse product) {
         log.info("Updating product with id: {} , received from review service event", product.getId());
-        Product existingProduct = repository.findById(product.getId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found id: " + product.getId()));
+        Product existingProduct = findOrError(product.getId());
         existingProduct.setRate(product.getRate());
         existingProduct.setQtyReviews(product.getQtyReviews());
         repository.save(existingProduct);
@@ -98,7 +92,14 @@ public class ProductService {
     public List<ProductResponse> getProductsInACart(Set<Long> productsId) {
         return repository.findByIdIn(productsId)
                 .stream()
-                .map(ProductResponse::new)
+                .map(ProductResponse::of)
                 .toList();
+    }
+
+    private Product findOrError(Long id) {
+        return repository.findById(id).orElseThrow(() -> {
+            log.error("Product with id: " + id + " not found");
+            return new ProductNotFoundException("Product with id: " + id + " not found");
+        });
     }
 }

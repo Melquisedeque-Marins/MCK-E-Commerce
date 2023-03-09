@@ -27,11 +27,13 @@ public class ProductRequest {
     private BigDecimal price;
     private List<String> imgUrl;
 
-    public ProductRequest(Product product) {
-        this.name = product.getName();
-        this.skuCode = product.getSkuCode();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.imgUrl = product.getImgUrl();
+    public Product toProduct() {
+        return Product.builder()
+                .name(name)
+                .skuCode(skuCode)
+                .description(description)
+                .price(price)
+                .imgUrl(imgUrl)
+                .build();
     }
 }
