@@ -1,5 +1,6 @@
 package com.melck.inventoryservice.entity;
 
+import com.melck.inventoryservice.dto.InventoryResponse;
 import com.melck.inventoryservice.enuns.ItemStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,5 +23,7 @@ public class Inventory {
 //    @Enumerated(EnumType.STRING)
 //    private ItemStatus status;
     private Integer quantity;
+
+
 
 }

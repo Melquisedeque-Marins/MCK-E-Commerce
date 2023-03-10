@@ -43,9 +43,6 @@ public class SecurityConfig {
                         .pathMatchers( "/api/v1/reviews/**").permitAll()
                         .pathMatchers( "/api/v1/orders/**").permitAll()
                         .pathMatchers( "/api/v1/inventory/**").permitAll()
-//                        .pathMatchers( "/api/v1/users/**").permitAll()
-//                        .pathMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-//                        .pathMatchers(HttpMethod.GET, "/api/v1/users/admin").permitAll()
                         .anyExchange().authenticated())
                 .oauth2Login(Customizer.withDefaults());
         return httpSecurity.build();

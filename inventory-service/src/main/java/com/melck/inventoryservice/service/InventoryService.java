@@ -33,7 +33,7 @@ public class InventoryService {
     public Inventory registerInInventory(String skuCode) {
         Optional<Inventory> inventoryOptional = inventoryRepository.findBySkuCode(skuCode);
 
-        if (inventoryOptional != null ) {
+        if (inventoryOptional.isPresent()) {
             throw new SkuCodeAlreadyRegisteredException("product with sku code: " + skuCode + " is already registered!");
         }
         Inventory inventory = new Inventory();
@@ -60,5 +60,14 @@ public class InventoryService {
         InventoryResponse response = modelMapper.map(inventory, InventoryResponse.class);
         response.setIsInStock(inventory.getQuantity() > 0);
         return response;
+    }
+
+    @Transactional
+    public InventoryResponse updateQuantityInInventory(String skuCode, InventoryRequest inventoryRequest) {
+        Inventory actualInventory = inventoryRepository.findBySkuCode(skuCode)
+                .orElseThrow(() -> new ResourceNotFoundException("register with SKu Code: " + skuCode + " not found"));
+        actualInventory.setQuantity(inventoryRequest.getQuantity());
+
+        return InventoryResponse.of(inventoryRepository.save(actualInventory));
     }
 }

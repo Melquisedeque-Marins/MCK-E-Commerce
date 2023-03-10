@@ -3,6 +3,7 @@ package com.melck.productservice.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,8 +13,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(jsr250Enabled = true)
+@EnableMethodSecurity(jsr250Enabled = true, prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig  {
+
+    private static final String[] SWAGGER_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**"
+    };
     public static final String ADMIN = "admin";
     public static final String USER = "user";
     private final JwtAuthConverter jwtAuthConverter;
@@ -22,9 +30,9 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers( "/api/v1/products/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers( "/swagger-resources/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/products/**").permitAll()
+                        .requestMatchers( SWAGGER_WHITELIST).permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
