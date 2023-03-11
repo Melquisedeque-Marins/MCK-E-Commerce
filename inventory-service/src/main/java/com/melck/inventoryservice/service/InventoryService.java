@@ -3,17 +3,14 @@ package com.melck.inventoryservice.service;
 import com.melck.inventoryservice.dto.InventoryRequest;
 import com.melck.inventoryservice.dto.InventoryResponse;
 import com.melck.inventoryservice.entity.Inventory;
-import com.melck.inventoryservice.enuns.ItemStatus;
 import com.melck.inventoryservice.repository.InventoryRepository;
 import com.melck.inventoryservice.service.exceptions.ResourceNotFoundException;
 import com.melck.inventoryservice.service.exceptions.SkuCodeAlreadyRegisteredException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +25,7 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
 
-    @Transactional(readOnly = true)
+    @Transactional
     @RabbitListener(queues = "products.v1.product-created")
     public Inventory registerInInventory(String skuCode) {
         Optional<Inventory> inventoryOptional = inventoryRepository.findBySkuCode(skuCode);
