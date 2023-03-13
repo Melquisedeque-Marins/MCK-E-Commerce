@@ -9,6 +9,7 @@ import com.melck.userservice.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -35,6 +36,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final CartClient cartClient;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RabbitTemplate rabbitTemplate;
 
     @Value("${keycloak-client-id}")
     private String clientId;
@@ -58,7 +60,10 @@ public class UserService {
         Long cartId = cartClient.getCartId();
         user.setCartId(cartId);
         log.info("User created successfully");
-        return mapUserToUserResponse(userRepository.save(user));
+        var newUser = userRepository.save(user);
+        String routingKey = "users.v1.user-created";
+        rabbitTemplate.convertAndSend(routingKey, newUser);
+        return mapUserToUserResponse(userRepository.save(newUser));
     }
 
     @Transactional
