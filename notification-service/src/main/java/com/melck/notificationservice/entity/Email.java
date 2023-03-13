@@ -1,5 +1,6 @@
 package com.melck.notificationservice.entity;
 
+import com.melck.notificationservice.enums.StatusEmail;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +22,6 @@ public class Email {
     private String text;
     private LocalDateTime sendDateEmail;
 
-//    @Enumerated(EnumType.STRING)
-//    private StatusEmail statusEmail;
+    @Enumerated(EnumType.STRING)
+    private StatusEmail statusEmail;
 }
