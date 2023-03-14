@@ -48,7 +48,6 @@ public class EmailService {
             helper.setTo(user.getEmail());
             helper.setSubject(email.getSubject());
             helper.setText(email.getText(),true);
-            helper.addAttachment("equipe.jpg", new ClassPathResource("/static/img/equipe.jpg"));
             mailSender.send(message);
             email.setStatusEmail(StatusEmail.SENT);
         } catch (MailException e) {
