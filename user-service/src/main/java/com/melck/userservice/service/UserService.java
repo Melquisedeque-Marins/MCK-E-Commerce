@@ -81,6 +81,9 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         log.info("User created successfully");
         userRepository.save(user);
+        var userNotification = modelMapper.map(user, UserNotification.class);
+        String routingKey = "users.v1.user-created";
+        rabbitTemplate.convertAndSend(routingKey, userNotification);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", clientId);
@@ -117,6 +120,7 @@ public class UserService {
             if (accessToken == null){
                 return "Error went authenticating";
             }
+            log.info(String.valueOf(accessToken));
             return webClient.post()
                     .uri(userUri)
                     .header("Authorization", "Bearer " + accessToken.getAccess_token())

@@ -14,6 +14,24 @@ spring:
     username: rabbitmq
     password: rabbitmq
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ADDRESS:mck.enterprises.clinic@gmail.com}
+    password: ${EMAIL_PASSWORD:actiwjqjdjjebbau}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          wrhitetimeout: 5000
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+
 eureka:
   client:
     register-with-eureka: true
@@ -22,5 +40,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     hostname: localhost
-
 

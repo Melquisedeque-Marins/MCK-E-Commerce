@@ -70,6 +70,12 @@ spring:
           predicates:
             - Path=/api/v1/inventory/**
             - Method=GET,POST,PUT,PATCH,DELETE
+# Notification Service Route
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notification/**
+            - Method=GET,POST,PUT,PATCH,DELETE
 
 # Discovery Service Route
         - id: discovery-service

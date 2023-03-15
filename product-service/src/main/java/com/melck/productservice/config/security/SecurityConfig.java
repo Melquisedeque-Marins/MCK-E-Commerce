@@ -30,7 +30,7 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST,"/api/v1/products/**").permitAll()
+                        .requestMatchers("/api/v1/products/**").permitAll()
                         .requestMatchers( SWAGGER_WHITELIST).permitAll()
 
                         .anyRequest().authenticated()

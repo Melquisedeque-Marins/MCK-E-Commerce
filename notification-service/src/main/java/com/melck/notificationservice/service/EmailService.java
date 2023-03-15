@@ -1,6 +1,6 @@
 package com.melck.notificationservice.service;
 
-import com.melck.notificationservice.dto.User;
+import com.melck.notificationservice.dto.UserNotification;
 import com.melck.notificationservice.entity.Email;
 import com.melck.notificationservice.enums.StatusEmail;
 import com.melck.notificationservice.repository.EmailRepository;
@@ -8,9 +8,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.BeanUtils;
 import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -25,22 +25,21 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     @RabbitListener(queues = "users.v1.user-created")
-    public Email sendEmail(User user) {
+    public void sendEmail(UserNotification user) {
 
         String name = user.getFullName();
         String[] firstName = name.split(" ");
-        String userName = firstName[0];
+        String username = firstName[0];
 
         Email email = new Email();
         email.setSendDateEmail(LocalDateTime.now());
         email.setEmailTo(user.getEmail());
-        email.setOwnerRef(userName);
+        email.setOwnerRef(username);
 
         email.setSubject("Account registered successfully");
         email.setEmailFrom("mck.enterprises.clinic@gmail.com");
-        email.setText("<h1>Olá, <style='text-transform:capitalize;'>" + userName + "</h1>"
-                + "\n Tou are now part of MCK-E-Commerce family. \n"
-                + "<img src='https://www.feedz.com.br/blog/wp-content/uploads/2021/10/mensagem-de-boas-vindas-para-novos-colaboradores-1.webp' alt='teste'/> ");
+        email.setText("<h1>Olá, <style='text-transform:capitalize;'>" + username + "</h1>"
+                + "\n You are now part of MCK-E-Commerce family. \n");
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -50,12 +49,9 @@ public class EmailService {
             helper.setText(email.getText(),true);
             mailSender.send(message);
             email.setStatusEmail(StatusEmail.SENT);
-        } catch (MailException e) {
-            email.setStatusEmail(StatusEmail.ERROR);
-        } catch (MessagingException e) {
+        } catch (MailException | MessagingException e) {
             email.setStatusEmail(StatusEmail.ERROR);
         }
-        return repository.save(email);
-
+        repository.save(email);
     }
 }

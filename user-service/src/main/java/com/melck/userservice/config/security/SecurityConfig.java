@@ -22,8 +22,7 @@ public class SecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
+                        .requestMatchers( "/api/v1/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyRequest().authenticated()
                 )
