@@ -76,11 +76,7 @@ public class UserService {
             log.error("The CPF:" + userRequest.getCpf() + " is already in use ");
             throw new AttributeAlreadyInUseException("The CPF: " + userRequest.getCpf() + " is already in use ");
         }
-        log.info("Creating a new user");
-        User user = modelMapper.map(userRequest, User.class);
-        Long cartId = cartClient.getCartId();
-        user.setCartId(cartId);
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", clientId);
@@ -103,7 +99,6 @@ public class UserService {
         newUser.setUsername(userRequest.getUsername());
         newUser.getCredentials().add(credential);
 
-
         try {
             TokenResponse accessToken = webClient.post()
                     .uri(tokenUri)
@@ -115,14 +110,12 @@ public class UserService {
                     .block();
 
             if (accessToken == null){
-                return "Error went authenticating";
+                log.error("An error occurred while trying to get the token");
+                throw new AttributeAlreadyInUseException("Error getting a token");
             }
-            log.info("User created successfully");
-            userRepository.save(user);
-            var userNotification = modelMapper.map(user, UserNotification.class);
-            rabbitTemplate.convertAndSend(EXCHANGE, "", userNotification);
 
-            return webClient.post()
+            log.info("Trying create user in Keycloak");
+            var responseMessage = webClient.post()
                     .uri(userUri)
                     .header("Authorization", "Bearer " + accessToken.getAccess_token())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -133,6 +126,22 @@ public class UserService {
                             .flatMap(error -> Mono.error(new AttributeAlreadyInUseException(error)))) // throw a functional exception
                     .bodyToMono(String.class)
                     .block();
+
+            if (responseMessage == null ){
+                log.info("Creating a new user");
+                Long cartId = cartClient.getCartId();
+                User user = modelMapper.map(userRequest, User.class);
+                user.setCartId(cartId);
+                user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+                userRepository.save(user);
+                log.info("User created successfully");
+                log.info("Sent a message to fanOutExchange");
+                var userNotification = modelMapper.map(user, UserNotification.class);
+                rabbitTemplate.convertAndSend(EXCHANGE, "", userNotification);
+                return "user created successfully";
+            }
+            return responseMessage;
+
         } catch (WebClientResponseException e ) {
             log.error("Error went trying to request user creation");
             throw new AttributeAlreadyInUseException("");
@@ -156,7 +165,8 @@ public class UserService {
                     .block();
 
             if (accessToken == null){
-                return "Error went authenticating";
+                log.error("An error occurred while trying to get the token");
+                throw new AttributeAlreadyInUseException("Error getting a token");
             }
             return webClient.post()
                     .uri(userUri)

@@ -27,7 +27,7 @@ public class EmailService {
     private String sender;
 
     @Transactional
-//    @RabbitListener(queues = "users.v1.user-created")
+    @RabbitListener(queues = "users.v1.user-created.send-notification")
     public String sendEmail(UserNotification user) {
 
         String name = user.getFullName();
