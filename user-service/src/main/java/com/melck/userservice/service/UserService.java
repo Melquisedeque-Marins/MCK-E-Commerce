@@ -38,6 +38,8 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RabbitTemplate rabbitTemplate;
 
+    private final static String EXCHANGE = "users.v1.user-created";
+
     @Value("${keycloak-client-id}")
     private String clientId;
     @Value("${keycloak-client-secret}")
@@ -79,11 +81,6 @@ public class UserService {
         Long cartId = cartClient.getCartId();
         user.setCartId(cartId);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        log.info("User created successfully");
-        userRepository.save(user);
-        var userNotification = modelMapper.map(user, UserNotification.class);
-        String routingKey = "users.v1.user-created";
-        rabbitTemplate.convertAndSend(routingKey, userNotification);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", clientId);
@@ -120,7 +117,11 @@ public class UserService {
             if (accessToken == null){
                 return "Error went authenticating";
             }
-            log.info(String.valueOf(accessToken));
+            log.info("User created successfully");
+            userRepository.save(user);
+            var userNotification = modelMapper.map(user, UserNotification.class);
+            rabbitTemplate.convertAndSend(EXCHANGE, "", userNotification);
+
             return webClient.post()
                     .uri(userUri)
                     .header("Authorization", "Bearer " + accessToken.getAccess_token())

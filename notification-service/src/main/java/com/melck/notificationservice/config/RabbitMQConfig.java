@@ -1,5 +1,8 @@
 package com.melck.notificationservice.config;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -13,10 +16,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-//    @Bean
-//    public Queue queue() {
-//        return new Queue("users.v1.user-created");
-//    }
+    @Bean
+    public Queue queueNotification() {
+        return new Queue("users.v1.user-created.send-notification");
+    }
+
+    @Bean
+    public Binding binding() {
+        var exchange = new FanoutExchange("users.v1.user-created");
+        return BindingBuilder.bind(queueNotification()).to(exchange);
+    }
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
@@ -24,7 +33,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public ApplicationListener<ApplicationReadyEvent> applicationReadyEventApplicationListener(RabbitAdmin rabbitAdmin) {
+    public ApplicationListener<ApplicationReadyEvent> applicationReadyEventApplicationListener(
+            RabbitAdmin rabbitAdmin) {
         return event -> rabbitAdmin.initialize();
     }
 

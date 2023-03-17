@@ -1,5 +1,6 @@
 package com.melck.userservice.config;
 
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -14,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
-    public Queue queue() {
-        return new Queue("users.v1.user-created");
+    public FanoutExchange fanoutExchange() {
+        return new FanoutExchange("users.v1.user-created");
     }
 
     @Bean
