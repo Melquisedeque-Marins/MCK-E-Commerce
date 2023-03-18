@@ -28,23 +28,16 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/register")
     @CircuitBreaker(name = "cart", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRequest userRequest) {
-        UserResponse newUser = userService.registerUser(userRequest);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUser.getId()).toUri();
-        return ResponseEntity.created(uri).body(newUser);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody UserRequest userRequest) {
+        String response = userService.registerUser(userRequest);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/key")
     public ResponseEntity<String> registerUserKey(@Valid @RequestBody UserCreationRequest userRequest) {
         String response = userService.registerUserInKeycloak(userRequest);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/local")
-    public ResponseEntity<String> registerUserKey(@Valid @RequestBody UserRequest userRequest) {
-        String response = userService.registerUserLocalAndKeycloak(userRequest);
         return ResponseEntity.ok(response);
     }
 

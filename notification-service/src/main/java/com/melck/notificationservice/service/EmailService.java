@@ -28,7 +28,7 @@ public class EmailService {
 
     @Transactional
     @RabbitListener(queues = "users.v1.user-created.send-notification")
-    public String sendEmail(UserNotification user) {
+    public void sendEmail(UserNotification user) {
 
         String name = user.getFullName();
         String[] fullName = name.split(" ");
@@ -55,9 +55,7 @@ public class EmailService {
         } catch (Exception e) {
             email.setStatusEmail(StatusEmail.ERROR);
             repository.save(email);
-            return "Error. Something went wrong";
         }
         repository.save(email);
-        return "Mail successfully sent";
     }
 }

@@ -50,33 +50,13 @@ public class UserService {
     private String userUri;
 
     @Transactional
-    public UserResponse registerUser(UserRequest userRequest) {
-        log.info("Verifying if cpf is already in use ");
-        User existentUser = userRepository.findByCpf(userRequest.getCpf());
-        if (existentUser != null) {
-            log.error("The CPF:" + userRequest.getCpf() + " is already in use ");
-            throw new AttributeAlreadyInUseException("The CPF: " + userRequest.getCpf() + " is already in use ");
-        }
-        log.info("Creating a new user");
-        User user = modelMapper.map(userRequest, User.class);
-        Long cartId = cartClient.getCartId();
-        user.setCartId(cartId);
-        log.info("User created successfully");
-        var newUser = userRepository.save(user);
-        String routingKey = "users.v1.user-created";
-        rabbitTemplate.convertAndSend(routingKey, newUser);
-        return mapUserToUserResponse(userRepository.save(newUser));
-    }
-
-    @Transactional
-    public String registerUserLocalAndKeycloak(UserRequest userRequest) {
+    public String registerUser(UserRequest userRequest) {
 
         User existentUser = userRepository.findByCpf(userRequest.getCpf());
         if (existentUser != null) {
             log.error("The CPF:" + userRequest.getCpf() + " is already in use ");
             throw new AttributeAlreadyInUseException("The CPF: " + userRequest.getCpf() + " is already in use ");
         }
-
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", clientId);

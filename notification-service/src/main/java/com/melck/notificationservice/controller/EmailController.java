@@ -20,7 +20,7 @@ public class EmailController {
 
     @PostMapping
     public ResponseEntity<String> sendEmail(@RequestBody UserNotification user) {
-        String email = emailService.sendEmail(user);
-        return ResponseEntity.ok(email);
+        emailService.sendEmail(user);
+        return ResponseEntity.ok().build();
     }
 }
