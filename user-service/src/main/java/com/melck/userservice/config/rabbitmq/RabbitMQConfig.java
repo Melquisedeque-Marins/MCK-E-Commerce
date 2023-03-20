@@ -1,4 +1,4 @@
-package com.melck.userservice.config;
+package com.melck.userservice.config.rabbitmq;
 
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;

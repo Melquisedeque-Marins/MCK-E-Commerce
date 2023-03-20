@@ -26,7 +26,6 @@ public class OrderService {
     @Transactional
     public Order placeOrder(Long cartId) {
         Order order = new Order();
-
         Cart cart = webClient.get()
                 .uri("http://localhost:8080/api/v1/cart/" + cartId)
                 .retrieve()
@@ -46,27 +45,27 @@ public class OrderService {
                 .toList();
 
         log.info("check inventory for {}", skuCodes);
-
         InventoryResponse[] inventoryResponsesArray = webClient.get()
-                .uri("http://localhost:8080/api/v1/inventory",
+                .uri("http://localhost:8080/api/v1/inventory/check-stock",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
 
         log.info("check if is in stock {}", (Object) inventoryResponsesArray);
+        if(inventoryResponsesArray == null ){
+            return null;
+        }
         boolean allProductsInStock =  Arrays.stream(inventoryResponsesArray)
                 .allMatch(InventoryResponse::getIsInStock);
 
         if (allProductsInStock) {
-
-            List<Double> totalPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
-            List<Integer> totalItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
+            List<Double> amountsPerItem = orderItemList.stream().map(OrderItem::getAmountPerItem).toList();
+            List<Integer> quantityPerItem = orderItemList.stream().map(OrderItem::getQuantity).toList();
             order.setCartId(cartId);
             order.setOrderItemList(orderItemList);
-            order.setProductQuantity(totalItem.stream().mapToInt(d -> d).sum());
-            order.setAmount(totalPerItem.stream().mapToDouble(d -> d).sum());
-
+            order.setProductQuantity(quantityPerItem.stream().mapToInt(d -> d).sum());
+            order.setAmount(amountsPerItem.stream().mapToDouble(d -> d).sum());
             return orderRepository.save(order);
         }
         else {

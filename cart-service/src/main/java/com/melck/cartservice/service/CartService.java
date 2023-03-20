@@ -35,7 +35,7 @@ public class CartService {
 
     @Transactional
     public Cart addProductToCart(Long cartId, CartRequest cartRequest) {
-        Cart cart = repository.getReferenceById(cartId);
+        Cart cart = repository.findById(cartId).orElseThrow(() -> new CartNotFoundException("Cart with id: " + cartId + " not found"));
         if (cartRequest.getQuantity() == null) {
             cartRequest.setQuantity(1);
         }
