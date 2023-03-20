@@ -15,7 +15,7 @@ public class RabbitMQConfig {
 
     @Bean
     public FanoutExchange fanoutExchange() {
-        return new FanoutExchange("users.v1.user-created");
+        return new FanoutExchange("orders.v1.order-placed");
     }
 
     @Bean
