@@ -83,7 +83,6 @@ public class OrderService {
         } catch (WebClientResponseException e) {
             throw e;
         }
-
     }
 
     private OrderItem mapProductToOrderItem(Product product) {
