@@ -12,6 +12,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,12 +55,11 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "products")
-    public List<ProductResponse> getAllProduct() {
+    public Page<ProductResponse> getAllProduct(Pageable pageable) {
         log.info("Searching for products...");
-        return repository.findAll()
-                .stream()
-                .map(ProductResponse::of)
-                .toList();
+        return repository.findAll(pageable)
+                .map(ProductResponse::of);
+
     }
 
     @Transactional

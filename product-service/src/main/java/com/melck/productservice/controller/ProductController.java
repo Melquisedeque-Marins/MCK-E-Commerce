@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -38,8 +40,8 @@ public class ProductController {
 
     @GetMapping()
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<ProductResponse> products = service.getAllProduct();
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(Pageable pageable) {
+        Page<ProductResponse> products = service.getAllProduct(pageable);
         return ResponseEntity.ok().body(products);
     }
 
