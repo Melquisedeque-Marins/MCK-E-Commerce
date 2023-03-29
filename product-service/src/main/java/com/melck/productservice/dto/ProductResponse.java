@@ -21,6 +21,7 @@ public class ProductResponse implements Serializable {
     private String description;
     private BigDecimal price;
     private List<String> imgUrl;
+    private String coverImg;
     private double rate;
     private Integer qtyReviews;
 
@@ -32,6 +33,7 @@ public class ProductResponse implements Serializable {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .imgUrl(product.getImgUrl())
+                .coverImg(product.getCoverImg())
                 .rate(product.getRate())
                 .qtyReviews(product.getQtyReviews())
                 .build();

@@ -28,6 +28,7 @@ public class Product {
     private BigDecimal price;
     @Column(columnDefinition = "TEXT")
     private List<String> imgUrl;
+    private String coverImg;
     private Double rate;
     private Integer qtyReviews;
 }

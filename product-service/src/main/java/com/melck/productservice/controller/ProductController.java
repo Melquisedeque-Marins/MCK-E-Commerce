@@ -25,6 +25,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/products")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProductController {
 
     private final ProductService service;

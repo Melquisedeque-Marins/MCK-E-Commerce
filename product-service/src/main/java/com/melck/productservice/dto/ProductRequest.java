@@ -26,6 +26,7 @@ public class ProductRequest {
     @Positive(message = "this value can't be negative or zero")
     private BigDecimal price;
     private List<String> imgUrl;
+    private String coverImg;
 
     public Product toProduct() {
         return Product.builder()
@@ -34,6 +35,7 @@ public class ProductRequest {
                 .description(description)
                 .price(price)
                 .imgUrl(imgUrl)
+                .coverImg(coverImg)
                 .build();
     }
 }

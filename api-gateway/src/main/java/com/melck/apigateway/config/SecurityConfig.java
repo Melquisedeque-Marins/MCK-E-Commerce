@@ -15,11 +15,11 @@ import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -35,6 +35,7 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain SecurityWebFilterChain(ServerHttpSecurity httpSecurity) {
         httpSecurity
+                .cors().and()
                 .csrf().disable()
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers( "/api/v1/products/**").permitAll()
