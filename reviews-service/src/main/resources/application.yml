@@ -26,8 +26,8 @@ jwt:
 
 app-config:
   client:
-    product: ${PRODUCT_URI:http://localhost:8080/api/v1/products/%s}
-    user: ${USER_URI:http://localhost:8080/api/v1/users/%s}
+    product: ${PRODUCT_URI:http://localhost:8083/api/v1/products/%s}
+    user: ${USER_URI:http://localhost:8082/api/v1/users/%s}
 
 eureka:
   client:

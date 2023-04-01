@@ -41,7 +41,6 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/products/**").permitAll()
                         .requestMatchers( SWAGGER_WHITELIST).permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer()

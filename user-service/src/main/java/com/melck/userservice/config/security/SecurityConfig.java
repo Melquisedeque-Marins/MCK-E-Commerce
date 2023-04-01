@@ -21,12 +21,12 @@ public class SecurityConfig  {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors().and()
+                .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers( "/api/v1/users/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/cart/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf().disable()
                 .oauth2ResourceServer()
                 .jwt()
                 .jwtAuthenticationConverter(jwtAuthConverter);
