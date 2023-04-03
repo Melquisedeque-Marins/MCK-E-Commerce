@@ -55,10 +55,10 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "products")
-    public Page<ProductResponse> getAllProduct(Pageable pageable) {
+    public Page<ProductResponse> getAllProduct(String name, Pageable pageable) {
+        Page<Product> page = repository.find(name, pageable);
         log.info("Searching for products...");
-        return repository.findAll(pageable)
-                .map(ProductResponse::of);
+        return page.map(ProductResponse::of);
 
     }
 
