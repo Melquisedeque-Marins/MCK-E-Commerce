@@ -2,10 +2,11 @@ package com.melck.productservice.controller;
 
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
+import com.melck.productservice.entity.Category;
+import com.melck.productservice.services.CategoryService;
 import com.melck.productservice.services.ProductService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,13 @@ import java.util.Set;
 public class ProductController {
 
     private final ProductService service;
+    private final CategoryService categoryService;
+
+    @GetMapping()
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity.ok().body(categories);
+    }
 
     @PostMapping
     @CacheEvict(value = "products", allEntries = true)
@@ -72,5 +80,4 @@ public class ProductController {
     public ResponseEntity<ProductResponse> editProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok().body(service.editProduct(productId, productRequest));
     }
-
 }

@@ -1,5 +1,6 @@
 package com.melck.productservice.dto;
 
+import com.melck.productservice.entity.Category;
 import com.melck.productservice.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +27,7 @@ public class ProductResponse implements Serializable {
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
+    private Set<Category> categories = new HashSet<>();
 
     public static ProductResponse of(Product product) {
         return ProductResponse.builder()
