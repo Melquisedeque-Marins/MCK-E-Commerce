@@ -16,14 +16,14 @@ INSERT INTO tb_product (name, description, price, sku_code, img_url, cover_img, 
 INSERT INTO tb_product (name, description, price, sku_code, img_url, cover_img, rate, qty_reviews)  VALUES ('Smart TV', 'Smart TV Sansung, LED, 70, Bivolt"', 4299.99, 'TVSL70B', 'https://v9y9v6a3.rocketcdn.me/wp-content/uploads/2021/05/kiboTEK_xiaomi_mi_tv_p1_32_006.png', 'https://v9y9v6a3.rocketcdn.me/wp-content/uploads/2021/05/kiboTEK_xiaomi_mi_tv_p1_32_006.png',  0.0, 0);
 INSERT INTO tb_product (name, description, price, sku_code, img_url, cover_img, rate, qty_reviews)  VALUES ('Smartphone', 'Smartphone Motorola M159, 5G, tela 7", 6Gb de RAM, 256GB de aramazenamento interno', 2200.99, 'SPM6GB256', 'https://cdn.weasy.io/users/xiaomi/catalog/redmi_note_12_pro_5g_black.png', 'https://cdn.weasy.io/users/xiaomi/catalog/redmi_note_12_pro_5g_black.png', 0.0, 0);
 
-INSERT INTO tb_category (name, created_At) VALUES ('telemóveis', NOW());
-INSERT INTO tb_category (name, created_At) VALUES ('informática', NOW());
-INSERT INTO tb_category (name, created_At) VALUES ('eletrodomésticos', NOW());
-INSERT INTO tb_category (name, created_At) VALUES ('móveis', NOW());
-INSERT INTO tb_category (name, created_At) VALUES ('tv', NOW());
+INSERT INTO tb_category (name) VALUES ('telemóveis');
+INSERT INTO tb_category (name) VALUES ('informática');
+INSERT INTO tb_category (name) VALUES ('eletrodomésticos');
+INSERT INTO tb_category (name) VALUES ('móveis');
+INSERT INTO tb_category (name) VALUES ('tv');
 
 
-INSERT INTO tb_product_category (product_id, category_id) VALUES (1, 2);
+INSERT INTO tb_product_category (product_id, category_id) VALUES (1, 1);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (2, 2);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (3, 5);
 INSERT INTO tb_product_category (product_id, category_id) VALUES (4, 1);

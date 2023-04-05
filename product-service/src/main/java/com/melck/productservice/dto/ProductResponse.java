@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,19 +28,23 @@ public class ProductResponse implements Serializable {
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
-    private Set<Category> categories = new HashSet<>();
+    private List<CategoryResponse> categories = new ArrayList<>();
+
+    public ProductResponse(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.skuCode = product.getSkuCode();
+        this.description = product.getDescription();
+        this.price = product.getPrice();
+        this.imgUrl = product.getImgUrl();
+        this.coverImg = product.getCoverImg();
+        this.rate = product.getRate();
+        this.qtyReviews = product.getQtyReviews();
+    }
 
     public static ProductResponse of(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .skuCode(product.getSkuCode())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .imgUrl(product.getImgUrl())
-                .coverImg(product.getCoverImg())
-                .rate(product.getRate())
-                .qtyReviews(product.getQtyReviews())
-                .build();
+        ProductResponse response = new ProductResponse(product);
+        product.getCategories().forEach( cat -> response.getCategories().add( new CategoryResponse(cat)));
+        return response;
     }
 }

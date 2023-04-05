@@ -1,19 +1,17 @@
 package com.melck.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Data
+@Builder
 @Entity
 @Table(name = "tb_category")
 public class Category {
@@ -21,23 +19,26 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "categories")
+
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
 
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant createdAt;
 
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant updatedAt;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = Instant.now();
-    }
+//    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+//    private Instant createdAt;
+//
+//    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+//    private Instant updatedAt;
+//
+//    @PrePersist
+//    public void prePersist() {
+//        createdAt = Instant.now();
+//    }
+//
+//    @PreUpdate
+//    public void preUpdate() {
+//        updatedAt = Instant.now();
+//    }
 
 }
