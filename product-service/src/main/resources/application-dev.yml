@@ -1,11 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/products
+    url: jdbc:postgresql://localhost:5432/product
     username: melck
-    password: melck123
+    password: 12345
     driver: org.postgresql.Driver
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+    hibernate:
+      ddl-auto: update

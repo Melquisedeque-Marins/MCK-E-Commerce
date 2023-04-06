@@ -15,8 +15,8 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
+@Data
 @Entity
 @Table(name = "tb_product")
 public class Product {
@@ -31,7 +31,7 @@ public class Product {
     private String description;
     private BigDecimal price;
     @Column(columnDefinition = "TEXT")
-    private List<String> imgUrl;
+    private String imgUrl;
     private String coverImg;
     private Double rate;
     private Integer qtyReviews;
@@ -40,6 +40,5 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     Set<Category> categories = new HashSet<>();
-
 
 }

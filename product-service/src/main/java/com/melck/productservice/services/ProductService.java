@@ -45,18 +45,19 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "product", key = "#id")
+//    @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
         Product product = findOrError(id);
         log.info("returning product with id: {} ", id);
+        log.info("returning product with id: {} ", product);
         return ProductResponse.of(product);
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "products")
     public Page<ProductResponse> getAllProduct(String name, Pageable pageable) {
-        Page<Product> page = repository.find(name, pageable);
+        Page<Product> page = repository.findByNameContainingIgnoreCase(name, pageable);
         log.info("Searching for products...");
         return page.map(ProductResponse::of);
 

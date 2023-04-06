@@ -2,7 +2,7 @@ server:
   port: 8083
 spring:
   profiles:
-    active: ${APP_PROFILE:test}
+    active: ${APP_PROFILE:dev}
   application:
     name: product-service
 

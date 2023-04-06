@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,21 +15,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ProductResponse implements Serializable {
     private Long id;
     private String name;
     private String skuCode;
     private String description;
     private BigDecimal price;
-    private List<String> imgUrl;
+    private String imgUrl;
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
     private List<CategoryResponse> categories = new ArrayList<>();
+
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -43,8 +44,9 @@ public class ProductResponse implements Serializable {
     }
 
     public static ProductResponse of(Product product) {
-        ProductResponse response = new ProductResponse(product);
+        var response = new ProductResponse(product);
         product.getCategories().forEach( cat -> response.getCategories().add( new CategoryResponse(cat)));
+        log.info("testando {}", response);
         return response;
     }
 }

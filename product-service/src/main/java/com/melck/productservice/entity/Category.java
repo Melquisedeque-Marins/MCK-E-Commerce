@@ -11,7 +11,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
 @Entity
 @Table(name = "tb_category")
 public class Category {
@@ -20,10 +19,8 @@ public class Category {
     private Long id;
     private String name;
 
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "categories")
     private Set<Product> products = new HashSet<>();
-
-
 
 //    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 //    private Instant createdAt;
@@ -40,5 +37,4 @@ public class Category {
 //    public void preUpdate() {
 //        updatedAt = Instant.now();
 //    }
-
 }
