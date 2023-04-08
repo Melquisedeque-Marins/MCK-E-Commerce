@@ -1,11 +1,7 @@
 package com.melck.productservice.controller;
 
-import com.melck.productservice.dto.CategoryResponse;
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
-import com.melck.productservice.entity.Category;
-import com.melck.productservice.entity.Product;
-import com.melck.productservice.services.CategoryService;
 import com.melck.productservice.services.ProductService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -32,19 +26,7 @@ import java.util.Set;
 public class ProductController {
 
     private final ProductService service;
-    private final CategoryService categoryService;
 
-
-    @GetMapping("/cats")
-    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        List<CategoryResponse> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok().body(categories);
-    }
-    @GetMapping("/cats/{id}")
-    public ResponseEntity<CategoryResponse> getById(@PathVariable Long id) {
-        CategoryResponse category = categoryService.getById(id);
-        return ResponseEntity.ok().body(category);
-    }
     @PostMapping
     @CacheEvict(value = "products", allEntries = true)
     @Operation(summary = "Register a new product" , description = "This endpoint is used to register new products in database ")
@@ -56,14 +38,25 @@ public class ProductController {
 
     @GetMapping()
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
-    public ResponseEntity<Page<ProductResponse>> getAllProducts(
-           // @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
-            @RequestParam(value = "name", defaultValue = "") String name,
-            Pageable pageable
+    public ResponseEntity<List<ProductResponse>> getAllProducts(
+//            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+//            @RequestParam(value = "name", defaultValue = "") String name,
+//            Pageable pageable
     ) {
-        Page<ProductResponse> products = service.getAllProduct(name.trim(), pageable);
+        List<ProductResponse> products = service.getAllProduct();
         return ResponseEntity.ok().body(products);
     }
+
+//    @GetMapping()
+//    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
+//    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+//            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+//            @RequestParam(value = "name", defaultValue = "") String name,
+//            Pageable pageable
+//    ) {
+//        Page<ProductResponse> products = service.getAllProduct(categoryId, name.trim(), pageable);
+//        return ResponseEntity.ok().body(products);
+//    }
 
     @GetMapping("/{id}")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")

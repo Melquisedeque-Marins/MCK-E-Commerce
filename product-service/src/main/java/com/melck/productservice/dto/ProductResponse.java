@@ -11,13 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProductResponse implements Serializable {
     private Long id;
     private String name;
@@ -28,25 +29,30 @@ public class ProductResponse implements Serializable {
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
-    private List<CategoryResponse> categories = new ArrayList<>();
-
-
-    public ProductResponse(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.skuCode = product.getSkuCode();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.imgUrl = product.getImgUrl();
-        this.coverImg = product.getCoverImg();
-        this.rate = product.getRate();
-        this.qtyReviews = product.getQtyReviews();
-    }
+    private List<Category> categories = new ArrayList<>();
 
     public static ProductResponse of(Product product) {
-        var response = new ProductResponse(product);
-        product.getCategories().forEach( cat -> response.getCategories().add( new CategoryResponse(cat)));
-        log.info("testando {}", response);
+        log.info("products from db {}", product);
+
+        var response = ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .skuCode(product.getSkuCode())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .imgUrl(product.getImgUrl())
+                .coverImg(product.getCoverImg())
+                .rate(product.getRate())
+                .qtyReviews(product.getQtyReviews())
+                .build();
+        List<Category> cats = product.getCategories().stream().toList();
+        response.setCategories(cats);
         return response;
     }
+//    public static ProductResponse of(Product product, Set<Category> categories) {
+//        var response = ProductResponse.of(product);
+//        response.getCategories().addAll(product.getCategories().stream().map(CategoryResponse::new).toList());
+//        log.info("testando {}", response);
+//        return response;
+//    }
 }

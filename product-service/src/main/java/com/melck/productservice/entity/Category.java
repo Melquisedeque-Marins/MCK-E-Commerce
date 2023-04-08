@@ -1,19 +1,22 @@
 package com.melck.productservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Data
 @Entity
 @Table(name = "tb_category")
-public class Category {
+public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,19 +25,4 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<Product> products = new HashSet<>();
 
-//    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-//    private Instant createdAt;
-//
-//    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-//    private Instant updatedAt;
-//
-//    @PrePersist
-//    public void prePersist() {
-//        createdAt = Instant.now();
-//    }
-//
-//    @PreUpdate
-//    public void preUpdate() {
-//        updatedAt = Instant.now();
-//    }
 }

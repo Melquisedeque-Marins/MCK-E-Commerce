@@ -1,7 +1,6 @@
 package com.melck.productservice.repository;
 
 import com.melck.productservice.entity.Product;
-import jakarta.persistence.SecondaryTable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,15 +17,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findBySkuCode(String skuCode);
 
-//    @Query("SELECT DISTINCT obj FROM Product obj WHERE "
-//            + "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%'))) ")
-//    Page<Product> find(String name, Pageable pageable);
+    @Query("SELECT DISTINCT obj FROM Product obj WHERE "
+            + "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%'))) ")
+    Page<Product> find(String name, Pageable pageable);
 
 
-    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
-
-    @Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj IN :products")
-    List<Product> findProductsWithCategories(List<Product> products);
 
 
 }
