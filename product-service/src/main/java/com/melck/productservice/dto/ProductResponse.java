@@ -29,7 +29,7 @@ public class ProductResponse implements Serializable {
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
-    private List<Category> categories = new ArrayList<>();
+    private List<CategoryResponse> categories;
 
     public static ProductResponse of(Product product) {
         log.info("products from db {}", product);
@@ -44,15 +44,10 @@ public class ProductResponse implements Serializable {
                 .coverImg(product.getCoverImg())
                 .rate(product.getRate())
                 .qtyReviews(product.getQtyReviews())
+                .categories(new ArrayList<>())
                 .build();
-        List<Category> cats = product.getCategories().stream().toList();
-        response.setCategories(cats);
+        product.getCategories().forEach(cat -> response.getCategories().add(new CategoryResponse(cat)));
         return response;
     }
-//    public static ProductResponse of(Product product, Set<Category> categories) {
-//        var response = ProductResponse.of(product);
-//        response.getCategories().addAll(product.getCategories().stream().map(CategoryResponse::new).toList());
-//        log.info("testando {}", response);
-//        return response;
-//    }
+
 }

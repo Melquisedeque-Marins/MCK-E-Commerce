@@ -17,11 +17,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findBySkuCode(String skuCode);
 
-    @Query("SELECT DISTINCT obj FROM Product obj WHERE "
+    @Query("SELECT DISTINCT obj FROM Product obj INNER JOIN obj.categories cats WHERE "
+            + "(COALESCE(:categories) IS NULL OR cats IN :categories) AND "
             + "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%'))) ")
     Page<Product> find(String name, Pageable pageable);
 
+//    @Query("SELECT obj FROM Product obj INNER JOIN obj.categories")
+//    List<Product> findAllProduct();
 
 
+//    @Query("SELECT obj FROM Product obj INNER JOIN obj.categories t WHERE obj.id = :id ")
+//    Product findOne(Long id);
+
+    @Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj IN :products")
+    List<Product> findProductsWithCategories(List<Product> products);
 
 }

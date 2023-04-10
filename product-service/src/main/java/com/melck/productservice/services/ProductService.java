@@ -2,6 +2,7 @@ package com.melck.productservice.services;
 
 import com.melck.productservice.dto.ProductRequest;
 import com.melck.productservice.dto.ProductResponse;
+import com.melck.productservice.entity.Category;
 import com.melck.productservice.entity.Product;
 import com.melck.productservice.repository.CategoryRepository;
 import com.melck.productservice.repository.ProductRepository;
@@ -13,6 +14,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,31 +46,22 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-//    @Cacheable(value = "product", key = "#id")
+    @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Long id) {
         log.info("Searching product with id {} ", id);
         Product product = findOrError(id);
-        log.info("returning product with id: {} ", product);
         return ProductResponse.of(product);
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "products")
-    public List<ProductResponse> getAllProduct() {
-        List<Product> list = repository.findAll();
+    public Page<ProductResponse> getAllProduct(Long categoryId, String name, Pageable pageable) {
+        List<Category> categories = (categoryId == 0) ? null : List.of(categoryRepository.getReferenceById(categoryId));
+        Page<Product> page = repository.find(name, pageable);
+        repository.findProductsWithCategories(page.getContent());
         log.info("Searching for products...");
-        return list.stream().map(ProductResponse::of).toList();
+        return page.map(ProductResponse::of);
     }
-
-//    @Transactional(readOnly = true)
-//    @Cacheable(value = "products")
-//    public Page<ProductResponse> getAllProduct(Long categoryId, String name, Pageable pageable) {
-////        List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getOne(categoryId));
-//        Page<Product> page = repository.find(name, pageable);
-////        repository.findProductsWithCategories(page.stream().toList());
-//        log.info("Searching for products...");
-//        return page.map(p -> convert(p, p.getCategories()));
-//    }
 
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
