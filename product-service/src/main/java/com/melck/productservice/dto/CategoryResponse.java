@@ -21,10 +21,11 @@ import java.util.List;
 public class CategoryResponse implements Serializable {
     private Long id;
     private String name;
-
+    private String categoryImg;
     public CategoryResponse (Category category) {
         this.id = category.getId();
         this.name = category.getName();
+        this.categoryImg = category.getCategoryImg();
     }
 
 }

@@ -29,6 +29,9 @@ public class ProductResponse implements Serializable {
     private String coverImg;
     private double rate;
     private Integer qtyReviews;
+    private Boolean isInSale;
+    private BigDecimal promotionalPrice;
+    private Integer discountValue;
     private List<CategoryResponse> categories;
 
     public static ProductResponse of(Product product) {
@@ -45,6 +48,9 @@ public class ProductResponse implements Serializable {
                 .rate(product.getRate())
                 .qtyReviews(product.getQtyReviews())
                 .categories(new ArrayList<>())
+                .isInSale(product.getIsInSale())
+                .promotionalPrice(product.getPromotionalPrice())
+                .discountValue(product.getDiscountValue())
                 .build();
         product.getCategories().forEach(cat -> response.getCategories().add(new CategoryResponse(cat)));
         return response;

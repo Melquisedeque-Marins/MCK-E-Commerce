@@ -19,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,6 +41,8 @@ public class ProductService {
         Product product = productRequest.toProduct();
         product.setQtyReviews(0);
         product.setRate(0.0);
+        product.setIsInSale(false);
+        product.setPromotionalPrice(BigDecimal.valueOf(0));
         log.info("Saving the new product");
         String routingKey = "products.v1.product-created";
         rabbitTemplate.convertAndSend(routingKey, product.getSkuCode());
@@ -57,9 +61,8 @@ public class ProductService {
     @Cacheable(value = "products")
     public Page<ProductResponse> getAllProduct(Long categoryId, String name, Pageable pageable) {
         List<Category> categories = (categoryId == 0) ? null : List.of(categoryRepository.getReferenceById(categoryId));
-        Page<Product> page = repository.find(name, pageable);
-        repository.findProductsWithCategories(page.getContent());
-        log.info("Searching for products...");
+        Page<Product> page = repository.find(categories, name, pageable);
+        repository.findProductsWithCategories(page.stream().collect(Collectors.toList()));
         return page.map(ProductResponse::of);
     }
 

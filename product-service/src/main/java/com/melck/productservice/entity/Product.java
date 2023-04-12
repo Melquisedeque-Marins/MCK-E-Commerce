@@ -35,8 +35,11 @@ public class Product {
     private String coverImg;
     private Double rate;
     private Integer qtyReviews;
+    private Boolean isInSale;
+    private BigDecimal promotionalPrice;
+    private Integer discountValue;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "tb_product_category",
     joinColumns = @JoinColumn(name = "product_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
