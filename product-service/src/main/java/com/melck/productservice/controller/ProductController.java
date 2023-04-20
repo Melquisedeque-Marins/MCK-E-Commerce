@@ -52,9 +52,10 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponse>> getAllProducts(
             @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
             @RequestParam(value = "name", defaultValue = "") String name,
+            @RequestParam(value = "isInSale", defaultValue = "false" ) boolean isInSale,
             Pageable pageable
     ) {
-        Page<ProductResponse> products = service.getAllProduct(categoryId, name.trim(), pageable);
+        Page<ProductResponse> products = service.getAllProduct(categoryId, name.trim(), isInSale, pageable);
         return ResponseEntity.ok().body(products);
     }
 

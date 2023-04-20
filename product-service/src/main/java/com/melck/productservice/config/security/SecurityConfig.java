@@ -39,7 +39,9 @@ public class SecurityConfig  {
                 .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole(ADMIN)
+
                         .requestMatchers( SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )

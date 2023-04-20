@@ -19,7 +19,7 @@ public class ProductDTO {
     private String skuCode;
     private String description;
     private BigDecimal price;
-    private List<String> imgUrl;
+    private String imgUrl;
     private Integer quantity;
 
 

@@ -31,14 +31,16 @@ spring:
   cloud:
     gateway:
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_LAST
         - TokenRelay=
       globalcors:
+        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
             allowedOrigins: "http://localhost:4200"
             allowedMethods: "*"
             allowedHeaders: "*"
+            allow-credentials: true
       routes:
 # Product Service Route
         - id: product-service

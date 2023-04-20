@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,8 +20,13 @@ public class Product {
     private String name;
     private String skuCode;
     private String description;
-    private double rate;
     private BigDecimal price;
-    private List<String> imgUrl;
-    private Integer quantity;
+    private String imgUrl;
+    private String coverImg;
+    private Double rate;
+    private Integer qtyReviews;
+    private Boolean isInSale;
+    private BigDecimal promotionalPrice;
+    private Integer discountValue;
+    List<CategoryDTO> categories = new ArrayList<>();
 }
