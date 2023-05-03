@@ -1,0 +1,79 @@
+version: '3.7'
+services:
+  product-service:
+    build: ./product-service
+    ports:
+      - '8083:8083'
+    restart: always
+    depends_on:
+      - eureka-discovery-server
+      - rabbitmq
+      - redis
+      - db
+
+  reviews-service:
+    build: ./reviews-service
+    ports:
+      - '8084:8084'
+    restart: always
+    depends_on:
+      - eureka-discovery-server
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - '8080:8080'
+    depends_on:
+      - keycloak
+      - product-service
+      - reviews-service
+
+  eureka-discovery-server:
+    build: ./discovery-service
+    ports:
+      - '8761:8761'
+
+  db:
+    image: postgres:12-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: melck
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: product
+    volumes:
+      - ./product-db:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.7.8-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis
+    ports:
+      - "6379:6379"
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8090:8081"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.3
+    ports:
+      - 8088:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+
