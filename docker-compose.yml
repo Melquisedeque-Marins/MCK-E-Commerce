@@ -1,38 +1,6 @@
 version: '3.7'
 services:
-  product-service:
-    build: ./product-service
-    ports:
-      - '8083:8083'
-    restart: always
-    depends_on:
-      - eureka-discovery-server
-      - rabbitmq
-      - redis
-      - db
-
-  reviews-service:
-    build: ./reviews-service
-    ports:
-      - '8084:8084'
-    restart: always
-    depends_on:
-      - eureka-discovery-server
-
-  api-gateway:
-    build: ./api-gateway
-    ports:
-      - '8080:8080'
-    depends_on:
-      - keycloak
-      - product-service
-      - reviews-service
-
-  eureka-discovery-server:
-    build: ./discovery-service
-    ports:
-      - '8761:8761'
-
+  
   db:
     image: postgres:12-alpine
     ports:
@@ -44,6 +12,46 @@ services:
     volumes:
       - ./product-db:/var/lib/postgresql/data
 
+  api-gateway:
+    image: melquisedequejr/mck-ecommerce-api-gateway:1.0
+    container_name: api-gateway
+    ports:
+      - '8080:8080'
+    restart: always
+    depends_on:
+      - eureka-discovery-server
+      - keycloak
+      - product-service
+      - reviews-service
+
+  eureka-discovery-server:
+    image: melquisedequejr/mck-ecommerce-eureka-discovery-server:1.0
+    ports:
+      - '8761:8761'
+
+  product-service:
+    image: melquisedequejr/mck-ecommerce-product-service:1.0
+    container_name: product-service
+    ports:
+      - '8083:8083'
+    restart: always
+    depends_on:
+      - eureka-discovery-server
+      - rabbitmq
+      - redis
+      - db
+
+  reviews-service:
+    image: melquisedequejr/mck-ecommerce-review-service:1.0
+    container_name: review-service
+    ports:
+      - '8084:8084'
+    restart: always
+    depends_on:
+      - rabbitmq
+      - eureka-discovery-server
+      - db
+      
   rabbitmq:
     image: rabbitmq:3.7.8-management
     ports:
@@ -60,17 +68,18 @@ services:
     ports:
       - "6379:6379"
 
-  redis-commander:
-    container_name: redis-commander
-    hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-    ports:
-      - "8090:8081"
+#  redis-commander:
+#    container_name: redis-commander
+#    hostname: redis-commander
+#    image: rediscommander/redis-commander:latest
+#    environment:
+#      - REDIS_HOSTS=local:redis:6379
+#    ports:
+#      - "8090:8081"
 
   keycloak:
     image: quay.io/keycloak/keycloak:20.0.3
+    command: [ "start-dev" ]
     ports:
       - 8088:8080
     environment:

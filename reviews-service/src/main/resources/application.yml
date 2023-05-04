@@ -5,6 +5,10 @@ spring:
     active: ${APP_PROFILE:test}
   application:
     name: review-service
+  
+  jpa:
+    open-in-view: false
+    
   rabbitmq:
     host: localhost
     port: 5672
@@ -17,6 +21,12 @@ spring:
         jwt:
           issuer-uri: http://localhost:8088/realms/mck-e-commerce
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+keycloak:
+  realm: mck-e-commerce
+  auth-server-url: http://localhost:8088/auth
+  ssl-required: external
+  resource: spring-cloud-gateway-client
 
 jwt:
   auth:

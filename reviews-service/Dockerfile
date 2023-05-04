@@ -1,6 +1,12 @@
+FROM maven:3.8.6-openjdk-18 as build
+WORKDIR /build
+COPY . .
+RUN mvn clean package -DskipTests
+
 FROM openjdk:17
-MAINTAINER MCK
 WORKDIR /app
-COPY ./target/reviews-service-*.jar ./review-service.jar
+MAINTAINER MCK
+ENV APP_PROFILE=docker
+COPY --from=build ./build/target/*.jar ./review-service.jar
+ENTRYPOINT [ "java", "-jar", "review-service.jar" ]
 EXPOSE 8084
-ENTRYPOINT java -jar review-service.jar

@@ -1,0 +1,27 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-discovery-server:8761/eureka
+  instance:
+    hostname: eureka-discovery-server
+
+spring:    
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
+         # jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
+            user-name-attribute: preferred_username
+        registration:
+          spring-cloud-gateway-client:
+              client-id: ${CLIENT_ID:mck-e-commerce-backend}
+              client-secret: ${CLIENT_SECRET:mAHSbngI7281HxbJo90GHpjMvAblbziB}
+              provider: keycloak
+              authorization-grant-type: authorization_code
+              redirect-uri: http://localhost:8080/**
+              scope: openid
