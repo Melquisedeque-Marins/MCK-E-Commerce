@@ -1,27 +1,27 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-discovery-server:8761/eureka
-  instance:
-    hostname: eureka-discovery-server
+      defaultZone: http://discovery-server:8761/eureka
+app:
+  eureka-server: discovery-server
 
-spring:    
+spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
-         # jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: ${ISSUER_URI:http://localhost:8088/realms/mck-e-commerce}
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
-            user-name-attribute: preferred_username
+           issuer-uri: ${ISSUER_URI:http://localhost:8088/realms/mck-e-commerce}
+           user-name-attribute: preferred_username
         registration:
           spring-cloud-gateway-client:
               client-id: ${CLIENT_ID:mck-e-commerce-backend}
-              client-secret: ${CLIENT_SECRET:mAHSbngI7281HxbJo90GHpjMvAblbziB}
+              client-secret: ${CLIENT_SECRET:7EeNrGlUXUgJZBx5dgPu9X9w4lMKYyAd}
               provider: keycloak
               authorization-grant-type: authorization_code
-              redirect-uri: http://localhost:8080/**
+              redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client
               scope: openid

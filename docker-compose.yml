@@ -15,28 +15,33 @@ services:
   api-gateway:
     image: melquisedequejr/mck-ecommerce-api-gateway:1.0
     container_name: api-gateway
+    environment:
+      - APP_PROFILE=docker
     ports:
       - '8080:8080'
     restart: always
     depends_on:
-      - eureka-discovery-server
-      - keycloak
+      - discovery-server
+#      - keycloak
       - product-service
       - reviews-service
 
-  eureka-discovery-server:
-    image: melquisedequejr/mck-ecommerce-eureka-discovery-server:1.0
+  discovery-server:
+    image: melquisedequejr/mck-ecommerce-discovery-server:1.0
+    container_name: discovery-server
     ports:
       - '8761:8761'
 
   product-service:
     image: melquisedequejr/mck-ecommerce-product-service:1.0
     container_name: product-service
+    environment:
+      - APP_PROFILE=docker
     ports:
       - '8083:8083'
     restart: always
     depends_on:
-      - eureka-discovery-server
+      - discovery-server
       - rabbitmq
       - redis
       - db
@@ -44,12 +49,14 @@ services:
   reviews-service:
     image: melquisedequejr/mck-ecommerce-review-service:1.0
     container_name: review-service
+    environment:
+      - APP_PROFILE=docker
     ports:
       - '8084:8084'
     restart: always
     depends_on:
       - rabbitmq
-      - eureka-discovery-server
+      - discovery-server
       - db
       
   rabbitmq:
@@ -77,12 +84,16 @@ services:
 #    ports:
 #      - "8090:8081"
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:20.0.3
-    command: [ "start-dev" ]
-    ports:
-      - 8088:8080
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-
+ # keycloak:
+ #   image: quay.io/keycloak/keycloak:21.0
+ #   container_name: keycloak
+ #   command: star-dev
+ #   hostname: keycloak
+ #   ports:
+ #     - 8088:8080
+ #   environment:
+ #     - KEYCLOAK_ADMIN=admin
+ #     - KEYCLOAK_ADMIN_PASSWORD=admin
+ #     - KC_HOSTNAME=localhost
+ #   volumes:
+ #     - ./realms/:/opt/keycloak/data/import

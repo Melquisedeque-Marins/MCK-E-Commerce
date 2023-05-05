@@ -22,7 +22,7 @@ spring:
         registration:
           spring-cloud-gateway-client:
               client-id: ${CLIENT_ID:mck-e-commerce-backend}
-              client-secret: ${CLIENT_SECRET:mAHSbngI7281HxbJo90GHpjMvAblbziB}
+              client-secret: ${CLIENT_SECRET:7EeNrGlUXUgJZBx5dgPu9X9w4lMKYyAd}
               provider: keycloak
               authorization-grant-type: authorization_code
               redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client

@@ -10,12 +10,15 @@ spring:
   application:
     name: API-GATEWAY
 
+app:
+  eureka-server: localhost
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${ISSUER_URI:http://localhost:8088/realms/mck-e-commerce}
-         # jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
@@ -24,7 +27,7 @@ spring:
         registration:
           spring-cloud-gateway-client:
               client-id: ${CLIENT_ID:mck-e-commerce-backend}
-              client-secret: ${CLIENT_SECRET:QNgRZY5DLGMeq9MZENUKLGSikQ85libO}
+              client-secret: ${CLIENT_SECRET:7EeNrGlUXUgJZBx5dgPu9X9w4lMKYyAd}
               provider: keycloak
               authorization-grant-type: authorization_code
               redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client
@@ -90,14 +93,14 @@ spring:
 
 # Discovery Service Route
         - id: discovery-service
-          uri: http://localhost:8761
+          uri: http://${app.eureka-server}:8761
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
 # Discovery Service static resources Route
         - id: discovery-service-static
-          uri: http://localhost:8761
+          uri: http://${app.eureka-server}:8761
           predicates:
             - Path=/eureka/**
 

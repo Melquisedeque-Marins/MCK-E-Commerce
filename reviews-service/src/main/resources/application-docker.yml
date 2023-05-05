@@ -23,9 +23,9 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-discovery-server:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
   instance:
-    hostname: eureka-discovery-server
+    hostname: discovery-server
     
 keycloak:
   realm: mck-e-commerce
@@ -38,3 +38,8 @@ jwt:
     converter:
       resource-id: spring-cloud-gateway-client
       principal-attribute: preferred_username
+
+app-config:
+  client:
+    product: ${PRODUCT_URI:http://api-gateway:8083/api/v1/products/%s}
+    user: ${USER_URI:http://api-gateway:8082/api/v1/users/%s}
