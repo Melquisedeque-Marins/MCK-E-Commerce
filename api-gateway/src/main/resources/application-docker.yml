@@ -10,17 +10,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI:http://localhost:8088/realms/mck-e-commerce}
+          issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-           issuer-uri: ${ISSUER_URI:http://localhost:8088/realms/mck-e-commerce}
+           issuer-uri: ${ISSUER_URI:http://keycloak:8088/realms/mck-e-commerce}
            user-name-attribute: preferred_username
         registration:
           spring-cloud-gateway-client:
               client-id: ${CLIENT_ID:mck-e-commerce-backend}
-              client-secret: ${CLIENT_SECRET:7EeNrGlUXUgJZBx5dgPu9X9w4lMKYyAd}
+              client-secret: ${CLIENT_SECRET:sLJQzRRrXDQDsAMNVWnIHqOaaXjJbPXL}
               provider: keycloak
               authorization-grant-type: authorization_code
               redirect-uri: http://localhost:8080/login/oauth2/code/spring-cloud-gateway-client

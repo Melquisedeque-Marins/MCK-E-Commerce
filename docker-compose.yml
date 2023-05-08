@@ -15,36 +15,43 @@ services:
   api-gateway:
     image: melquisedequejr/mck-ecommerce-api-gateway:1.0
     container_name: api-gateway
-    environment:
-      - APP_PROFILE=docker
     ports:
       - '8080:8080'
-    restart: always
+    environment:
+      - APP_PROFILE=docker
     depends_on:
       - discovery-server
-#      - keycloak
+      - keycloak
       - product-service
       - reviews-service
+    networks:
+      - mck-net
+    restart: always
 
   discovery-server:
     image: melquisedequejr/mck-ecommerce-discovery-server:1.0
     container_name: discovery-server
     ports:
       - '8761:8761'
+    networks:
+      - mck-net
+    restart: always
 
   product-service:
     image: melquisedequejr/mck-ecommerce-product-service:1.0
     container_name: product-service
-    environment:
-      - APP_PROFILE=docker
     ports:
       - '8083:8083'
     restart: always
+    environment:
+      - APP_PROFILE=docker
     depends_on:
       - discovery-server
       - rabbitmq
       - redis
       - db
+    networks:
+      - mck-net
 
   reviews-service:
     image: melquisedequejr/mck-ecommerce-review-service:1.0
@@ -58,7 +65,9 @@ services:
       - rabbitmq
       - discovery-server
       - db
-      
+    networks:
+      - mck-net
+
   rabbitmq:
     image: rabbitmq:3.7.8-management
     ports:
@@ -67,6 +76,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=rabbitmq
       - RABBITMQ_DEFAULT_PASS=rabbitmq
+    networks:
+      - mck-net
 
   redis:
     container_name: redis
@@ -74,26 +85,23 @@ services:
     image: redis
     ports:
       - "6379:6379"
+    networks:
+      - mck-net
 
-#  redis-commander:
-#    container_name: redis-commander
-#    hostname: redis-commander
-#    image: rediscommander/redis-commander:latest
-#    environment:
-#      - REDIS_HOSTS=local:redis:6379
-#    ports:
-#      - "8090:8081"
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0
+    container_name: keycloak
+    ports:
+      - 8088:8080
+    hostname: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    networks:
+      - mck-net
+    volumes:
+      - ./realms/:/opt/keycloak/data/import
+    command: [ "start-dev", "--import-realm" ]
 
- # keycloak:
- #   image: quay.io/keycloak/keycloak:21.0
- #   container_name: keycloak
- #   command: star-dev
- #   hostname: keycloak
- #   ports:
- #     - 8088:8080
- #   environment:
- #     - KEYCLOAK_ADMIN=admin
- #     - KEYCLOAK_ADMIN_PASSWORD=admin
- #     - KC_HOSTNAME=localhost
- #   volumes:
- #     - ./realms/:/opt/keycloak/data/import
+networks:
+  mck-net: 
