@@ -47,6 +47,12 @@ public class ProductController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("/cats/{id}")
+    public ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
+        Category category = categoryService.findCategoryById(id);
+        return ResponseEntity.ok(category);
+    }
+
     @GetMapping
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
     public ResponseEntity<Page<ProductResponse>> getAllProducts(

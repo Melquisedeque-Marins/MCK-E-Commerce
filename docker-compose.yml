@@ -17,15 +17,13 @@ services:
     container_name: api-gateway
     ports:
       - '8080:8080'
-    environment:
-      - APP_PROFILE=docker
     depends_on:
       - discovery-server
-      - keycloak
+#      - keycloak
       - product-service
       - reviews-service
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
     restart: always
 
   discovery-server:
@@ -33,8 +31,8 @@ services:
     container_name: discovery-server
     ports:
       - '8761:8761'
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
     restart: always
 
   product-service:
@@ -50,8 +48,8 @@ services:
       - rabbitmq
       - redis
       - db
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
 
   reviews-service:
     image: melquisedequejr/mck-ecommerce-review-service:1.0
@@ -65,8 +63,8 @@ services:
       - rabbitmq
       - discovery-server
       - db
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
 
   rabbitmq:
     image: rabbitmq:3.7.8-management
@@ -76,8 +74,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=rabbitmq
       - RABBITMQ_DEFAULT_PASS=rabbitmq
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
 
   redis:
     container_name: redis
@@ -85,25 +83,23 @@ services:
     image: redis
     ports:
       - "6379:6379"
-    networks:
-      - mck-net
+    # networks:
+    #   - mck-net
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:21.0
-    container_name: keycloak
-    ports:
-      - 8088:8080
-    hostname: keycloak
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    networks:
-      - mck-net
-    volumes:
-      - ./realms/:/opt/keycloak/data/import
-    command: [ "start-dev", "--import-realm" ]
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:21.0
+#    container_name: keycloak
+#    ports:
+#      - 8088:8080
+#    hostname: keycloak
+#    environment:
+#     - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=admin
+#    volumes:
+#      - ./realms/:/opt/keycloak/data/import
+#    command: [ "start-dev", "--import-realm" ]
 
-networks:
-  mck-net: 
+# networks:
+#   mck-net: 
     
    
