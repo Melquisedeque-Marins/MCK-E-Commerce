@@ -64,6 +64,15 @@ public class ProductController {
         Page<ProductResponse> products = service.getAllProduct(categoryId, name.trim(), isInSale, pageable);
         return ResponseEntity.ok().body(products);
     }
+    }
+    @GetMapping
+    public ResponseEntity<Page<ProductResponse>> getAllProductsPerCategory(
+            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+            Pageable pageable
+    ) {
+        Page<ProductResponse> products = service.getAllProductPerCategory(categoryId, pageable);
+        return ResponseEntity.ok().body(products);
+    }
 
     @GetMapping("/{id}")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
