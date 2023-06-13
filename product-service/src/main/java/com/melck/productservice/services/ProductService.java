@@ -65,7 +65,7 @@ public class ProductService {
         repository.findProductsWithCategories(page.stream().collect(Collectors.toList()));
         return page.map(ProductResponse::of);
     }
-    
+
     @Transactional(readOnly = true)
     @Cacheable(value = "products")
     public Page<ProductResponse> getAllProductPerCategory(Long categoryId, Pageable pageable) {
