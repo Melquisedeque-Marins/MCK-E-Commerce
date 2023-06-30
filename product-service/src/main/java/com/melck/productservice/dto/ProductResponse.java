@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class ProductResponse implements Serializable {
     private Long id;
     private String name;
+    private String brand;
     private String skuCode;
     private String description;
     private BigDecimal price;
@@ -40,6 +41,7 @@ public class ProductResponse implements Serializable {
         var response = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .brand(product.getBrand())
                 .skuCode(product.getSkuCode())
                 .description(product.getDescription())
                 .price(product.getPrice())

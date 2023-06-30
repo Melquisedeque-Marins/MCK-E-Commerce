@@ -26,6 +26,7 @@ public class Product {
     private Long id;
 
     private String name;
+    private String brand;
     private String skuCode;
     @Column(columnDefinition = "TEXT")
     private String description;

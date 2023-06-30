@@ -20,6 +20,8 @@ public class ProductRequest {
     @NotBlank(message = "This field is required")
     private String name;
     @NotBlank(message = "This field is required")
+    private String brand;
+    @NotBlank(message = "This field is required")
     private String skuCode;
     @NotBlank(message = "This field is required")
     private String description;
@@ -31,6 +33,7 @@ public class ProductRequest {
     public Product toProduct() {
         return Product.builder()
                 .name(name)
+                .brand(brand)
                 .skuCode(skuCode)
                 .description(description)
                 .price(price)
