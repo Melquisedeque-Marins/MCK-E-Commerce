@@ -74,17 +74,17 @@ public class ProductController {
         return ResponseEntity.ok().body(products);
     }
 
-//    @GetMapping("/price")
-//    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
-//    public ResponseEntity<Page<ProductResponse>> getAllProducts(
-//            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
-//            @RequestParam(value = "min-price", defaultValue = "0") Long minPrice,
-//            @RequestParam(value = "max-price", defaultValue = "0") Long maxPrice,
-//            Pageable pageable
-//    ) {
-//        Page<ProductResponse> products = service.getAllProduct(categoryId, minPrice, pageable);
-//        return ResponseEntity.ok().body(products);
-//    }
+    @GetMapping("/category/filter")
+    @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(
+            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+            @RequestParam(value = "min-price", defaultValue = "0") Long minPrice,
+            @RequestParam(value = "max-price", defaultValue = "10000000") Long maxPrice,
+            Pageable pageable
+    ) {
+        Page<ProductResponse> products = service.getAllProductFilter(categoryId, minPrice, maxPrice, pageable);
+        return ResponseEntity.ok().body(products);
+    }
 
     @GetMapping("/{id}")
     @CircuitBreaker(name = "review", fallbackMethod = "fallbackMethod")

@@ -32,4 +32,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj IN :products")
     List<Product> findProductsWithCategories(List<Product> products);
 
+    @Query("SELECT DISTINCT obj FROM Product obj INNER JOIN obj.categories cats WHERE "
+            + "(COALESCE(:categories) IS NULL OR cats IN :categories) AND "
+            + "(obj.price <= :maxPrice) AND (obj.price >= :minPrice) " )
+    Page<Product> filter(List<Category> categories, Long minPrice, Long maxPrice, Pageable pageable);
+
+
 }

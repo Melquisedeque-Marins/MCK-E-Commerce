@@ -75,6 +75,17 @@ public class ProductService {
         return page.map(ProductResponse::of);
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "products")
+    public Page<ProductResponse> getAllProductFilter(Long categoryId, Long minPrice, Long maxPrice, Pageable pageable) {
+        List<Category> categories = (categoryId == 0) ? null : List.of(categoryRepository.getReferenceById(categoryId));
+        Page<Product> page = repository.filter(categories, minPrice, maxPrice, pageable);
+        repository.findProductsWithCategories(page.stream().collect(Collectors.toList()));
+        return page.map(ProductResponse::of);
+    }
+
+
+
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public ProductResponse editProduct(Long id, ProductRequest productRequest) {
